@@ -1,9 +1,10 @@
 TODO --->
 
-# JWT --> create package which will have jwt secrets and functions to sign and verify token
+# DB --> 
+    Understand the db structure 
 
-# API -> 
-    create signin , signup , create-room , get-chats  endpoints
+# API --> 
+    create create-room , get-chats  endpoints
 
 # WS -->
     create socket io server and authenticate user based on jwt token in the header

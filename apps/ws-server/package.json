@@ -13,7 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@chatify/jwt" : "workspace:*",
+    "@chatify/zod" : "workspace:*",
+    "@chatify/utils" : "workspace:*",
     "@chatify/db": "workspace:*",
     "@chatify/typescript-config": "workspace:*",
     "jsonwebtoken": "^9.0.2",
