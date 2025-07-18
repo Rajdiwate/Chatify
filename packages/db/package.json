@@ -1,0 +1,24 @@
+{
+  "name": "@chatify/db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "exports" : {
+    "." : "./src/index.ts"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "studio": "prisma studio"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@chatify/typescript-config": "workspace:*",
+    "@prisma/client": "6.12.0",
+    "prisma": "^6.12.0",
+    "typescript": "^5.8.3"
+  }
+}

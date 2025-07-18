@@ -1,0 +1,182 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  email       String   @unique
+  passwordHash String  @map("password_hash")
+  displayName String?  @map("display_name")
+  avatarUrl   String?  @map("avatar_url")
+  phoneNumber String?  @map("phone_number")
+  lastSeen    DateTime @default(now()) @map("last_seen")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  sentFriendRequests     Friendship[]      @relation("FriendshipRequester")
+  receivedFriendRequests Friendship[]      @relation("FriendshipAddressee")
+  chatParticipants       ChatParticipant[]
+  sentMessages           Message[]
+  messageStatuses        MessageStatus[]
+  sentInvites            ChatInvite[]      @relation("ChatInviteInviter")
+  receivedInvites        ChatInvite[]      @relation("ChatInviteInvitee")
+  createdChats           Chat[]
+
+  @@map("users")
+}
+
+model Friendship {
+  id           String           @id @default(cuid())
+  requesterId  String           @map("requester_id")
+  addresseeId  String           @map("addressee_id")
+  status       FriendshipStatus @default(PENDING)
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  requester User @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@map("friendships")
+}
+
+model Chat {
+  id          String   @id @default(cuid())
+  type        ChatType
+  name        String?
+  description String?
+  avatarUrl   String?  @map("avatar_url")
+  createdBy   String   @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  creator      User              @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  participants ChatParticipant[]
+  messages     Message[]
+  invites      ChatInvite[]
+
+  @@map("chats")
+}
+
+model ChatParticipant {
+  id               String              @id @default(cuid())
+  chatId           String              @map("chat_id")
+  userId           String              @map("user_id")
+  role             ChatParticipantRole @default(MEMBER)
+  joinedAt         DateTime            @default(now()) @map("joined_at")
+  lastReadMessageId String?            @map("last_read_message_id")
+  leftAt           DateTime?           @map("left_at")
+
+  // Relations
+  chat            Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadMessage Message? @relation(fields: [lastReadMessageId], references: [id])
+
+  @@unique([chatId, userId])
+  @@map("chat_participants")
+}
+
+model Message {
+  id              String      @id @default(cuid())
+  chatId          String      @map("chat_id")
+  senderId        String      @map("sender_id")
+  content         String?
+  messageType     MessageType @default(TEXT) @map("message_type")
+  fileUrl         String?     @map("file_url")
+  replyToMessageId String?    @map("reply_to_message_id")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  deletedAt       DateTime?   @map("deleted_at")
+
+  // Relations
+  chat                Chat              @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender              User              @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  replyToMessage      Message?          @relation("MessageReply", fields: [replyToMessageId], references: [id])
+  replies             Message[]         @relation("MessageReply")
+  messageStatuses     MessageStatus[]
+  lastReadByParticipants ChatParticipant[]
+
+  @@map("messages")
+}
+
+model MessageStatus {
+  id        String              @id @default(cuid())
+  messageId String              @map("message_id")
+  userId    String              @map("user_id")
+  status    MessageStatusType   @default(SENT)
+  timestamp DateTime            @default(now())
+
+  // Relations
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@map("message_statuses")
+}
+
+model ChatInvite {
+  id        String           @id @default(cuid())
+  chatId    String           @map("chat_id")
+  inviterId String           @map("inviter_id")
+  inviteeId String           @map("invitee_id")
+  status    ChatInviteStatus @default(PENDING)
+  expiresAt DateTime?        @map("expires_at")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  chat     Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  inviter  User @relation("ChatInviteInviter", fields: [inviterId], references: [id], onDelete: Cascade)
+  invitee  User @relation("ChatInviteInvitee", fields: [inviteeId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, inviteeId])
+  @@map("chat_invites")
+}
+
+// Enums
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
+enum ChatParticipantRole {
+  MEMBER
+  ADMIN
+  OWNER
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  SYSTEM
+}
+
+enum MessageStatusType {
+  SENT
+  DELIVERED
+  READ
+}
+
+enum ChatInviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}

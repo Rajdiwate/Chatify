@@ -1,0 +1,3 @@
+{
+  "extends" : "@chatify/typescript-config/base",
+}
