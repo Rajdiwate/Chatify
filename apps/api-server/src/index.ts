@@ -16,8 +16,11 @@ declare global {
 }
 
 import userRoutes from "./routes/user.routes";
+import { errorMiddleware } from "./middleware/error.middleware";
 
 app.use("/api", userRoutes);
+
+app.use(errorMiddleware);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("app listening on 3000");

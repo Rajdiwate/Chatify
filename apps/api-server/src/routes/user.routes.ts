@@ -7,5 +7,6 @@ const router = Router();
 router.route("/signup").post(signup);
 router.route("/signin").post(signin);
 router.route("/me").get(authMiddleware, getCurrentUser);
+router.route("/request/send").post(authMiddleware, getCurrentUser);
 
-export default router as Router;
+export default router as Router
