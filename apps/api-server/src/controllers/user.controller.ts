@@ -110,3 +110,50 @@ export const getCurrentUser = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({ success: true, user });
 });
+
+export const getFriends = asyncHandler(async (req, res, next) => {
+  const userId = req.userId as string;
+
+  const friends = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      sentFriendRequests: {
+        where: { status: "ACCEPTED" },
+        include: {
+          receiver: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+        },
+      },
+      receivedFriendRequests: {
+        where: { status: "ACCEPTED" },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!friends) {
+    throw new AppError("No User with this Id", 404);
+  }
+
+  const friendsList = [
+    ...friends.sentFriendRequests.map((req) => req.receiver),
+    ...friends.receivedFriendRequests.map((req) => req.sender),
+  ];
+
+  return res.status(200).json({ success: true, friends: friendsList });
+});
