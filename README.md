@@ -7,8 +7,6 @@ TODO --->
 
 # Frontend -->
     setup -> 
-        add axios ,react router dom , typscrit , tailwindcss , redux tooklit and configure them
-        ceate login , signup pages and implement auth
         create home page  
             which will have header containing logo , searchBar with placeholder "search for people" and "profile" 
             below the header divider it in 2 sections. right one chatbox ,left one  friend selection section
@@ -20,8 +18,6 @@ TODO --->
 
 
 # API --> 
-    POST /send-request
-    POST /accept-request
     POST /create-group
     POST /join-group
     POST /send-message
