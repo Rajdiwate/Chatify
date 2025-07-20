@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentUserThunk, signinThunk, signupThunk } from "./thunks";
+import { getCurrentUserThunk, getPendingRequestsThunk, signinThunk, signupThunk } from "./thunks";
 import type { IAuth } from "./types";
 
 const initialState: IAuth = {
   loading: false,
+  pendingRequests: [],
 };
 
 const authSlice = createSlice({
@@ -23,7 +24,7 @@ const authSlice = createSlice({
       })
       .addCase(signinThunk.rejected, (state, action) => {
         state.loading = false;
-        console.log("rejected" , action)
+        console.log("rejected", action);
         state.error = action.payload;
       });
 
@@ -42,7 +43,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       });
 
-       builder
+    builder
       .addCase(getCurrentUserThunk.pending, (state) => {
         state.loading = true;
         state.error = "";
@@ -56,6 +57,22 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = "";
       });
+    
+    builder
+      .addCase(getPendingRequestsThunk.pending, (state) => {  
+        state.error = "";
+      })
+      .addCase(getPendingRequestsThunk.fulfilled, (state, action) => {  
+        state.loading = false;
+        state.error = "";
+        if (state.user) {
+          state.pendingRequests =action.payload;
+        }
+      })
+      .addCase(getPendingRequestsThunk.rejected, (state, action) => {
+        state.error = action.payload;
+      }
+    )
   },
 });
 

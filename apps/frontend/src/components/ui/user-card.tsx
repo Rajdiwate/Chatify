@@ -1,25 +1,27 @@
-import { Paper, Avatar, Typography, Box, Chip } from "@mui/material"
-import { Circle } from "lucide-react"
+import { Paper, Avatar, Typography, Box, Chip } from "@mui/material";
+import { Circle } from "lucide-react";
+import type { dbFriend } from "../../lib/redux/slices/friend/types";
+
+// interface UserCardProps {
+//   id: string
+//   name: string
+//   avatar?: string
+//   lastMessage?: string
+//   timestamp?: string
+//   isOnline?: boolean
+//   unreadCount?: number
+//   isSelected?: boolean
+//   onClick?: () => void   
+// }
 
 interface UserCardProps {
-  id: string
-  name: string
-  avatar?: string
-  lastMessage?: string
-  timestamp?: string
-  isOnline?: boolean
-  unreadCount?: number
-  isSelected?: boolean
-  onClick?: () => void
+  friend: dbFriend;
+  isSelected?: boolean;
+  onClick?: () => void;
 }
 
 export function UserCard({
-  name,
-  avatar,
-  lastMessage,
-  timestamp,
-  isOnline = false,
-  unreadCount = 0,
+  friend,
   isSelected = false,
   onClick,
 }: UserCardProps) {
@@ -33,34 +35,51 @@ export function UserCard({
     >
       <Box className="flex items-center gap-3">
         <div className="relative">
-          <Avatar src={avatar} alt={name} className="w-12 h-12" sx={{ bgcolor: isSelected ? "#3b82f6" : "#6b7280" }}>
-            {name.charAt(0).toUpperCase()}
+          <Avatar
+            src={friend.username}
+            alt={friend.username}
+            className="w-12 h-12"
+            sx={{ bgcolor: isSelected ? "#3b82f6" : "#6b7280" }}
+          >
+            {friend.username.charAt(0).toUpperCase()}
           </Avatar>
-          {isOnline && <Circle className="absolute -bottom-1 -right-1 w-4 h-4 text-green-500 fill-current" />}
+          {/* {isOnline && (
+            <Circle className="absolute -bottom-1 -right-1 w-4 h-4 text-green-500 fill-current" />
+          )} */}
         </div>
 
         <Box className="flex-1 min-w-0">
           <Box className="flex items-center justify-between mb-1">
-            <Typography variant="subtitle2" className="font-semibold text-gray-900 truncate">
-              {name}
+            <Typography
+              variant="subtitle2"
+              className="font-semibold text-gray-900 truncate"
+            >
+              {friend.username}
             </Typography>
-            {timestamp && (
+            {/* {timestamp && (
               <Typography variant="caption" className="text-gray-500 text-xs">
                 {timestamp}
               </Typography>
-            )}
+            )} */}
           </Box>
-          {lastMessage && (
-            <Typography variant="body2" className="text-gray-600 text-sm truncate">
+          {/* {lastMessage && (
+            <Typography
+              variant="body2"
+              className="text-gray-600 text-sm truncate"
+            >
               {lastMessage}
             </Typography>
-          )}
+          )} */}
         </Box>
 
-        {unreadCount > 0 && (
-          <Chip label={unreadCount} size="small" className="bg-blue-500 text-white text-xs min-w-[20px] h-5" />
-        )}
+        {/* {unreadCount > 0 && (
+          <Chip
+            label={unreadCount}
+            size="small"
+            className="bg-blue-500 text-white text-xs min-w-[20px] h-5"
+          />
+        )} */}
       </Box>
     </Paper>
-  )
+  );
 }

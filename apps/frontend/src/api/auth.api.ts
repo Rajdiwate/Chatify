@@ -1,7 +1,11 @@
 import type { AxiosError } from "axios";
 import { axiosInstance } from "../lib/axios/axiosInstance";
 import type { SigninFormData } from "../components/auth/SigninForm";
-import type { TauthResponse, THttpError } from "../lib/redux/slices/auth/types";
+import type {
+  TauthResponse,
+  THttpError,
+  TPendingRequestsResponse,
+} from "../lib/redux/slices/auth/types";
 import type { SignupFormData } from "../components/auth/SignupForm";
 
 export const signInRequest = async function (reqData: SigninFormData) {
@@ -36,6 +40,19 @@ export const getCurrentUserRequest = async function () {
   try {
     const { data }: { data: TauthResponse } =
       await axiosInstance.get("/api/me");
+    return data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    const errorData = axiosError.response?.data as THttpError;
+    return errorData;
+  }
+};
+
+export const getPendingRequestsRequest = async function () {
+  try {
+    const { data }: { data: TPendingRequestsResponse } = await axiosInstance.get(
+      "/api/requests/pending"
+    );
     return data;
   } catch (error) {
     const axiosError = error as AxiosError;

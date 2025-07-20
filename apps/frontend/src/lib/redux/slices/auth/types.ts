@@ -1,3 +1,9 @@
+export type TFriendRequest = {
+  id: string;
+  email: string;
+  username: string;
+};
+
 export type dbUser = {
   id: string;
   username: string;
@@ -15,6 +21,7 @@ export interface IAuth {
   loading: boolean;
   error?: string;
   user?: dbUser;
+  pendingRequests: TFriendRequest[];
 }
 
 export type TSigninInput = {
@@ -30,6 +37,10 @@ export type TSignupInput = {
 export type TauthResponse = {
   success: true;
   user: dbUser;
+};
+export type TPendingRequestsResponse = {
+  success: true;
+  pendingRequests: TFriendRequest[];
 };
 
 export type THttpError = {

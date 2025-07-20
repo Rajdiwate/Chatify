@@ -94,7 +94,7 @@ export const signup = asyncHandler(async (req, res, next) => {
       httpOnly: true, // Prevents XSS attacks
       secure: process.env.NODE_ENV === "production", // Only send over HTTPS (in production)
     })
-    .json({ success: true, user });
+    .json({ success: true, user});
 });
 
 export const getCurrentUser = asyncHandler(async (req, res, next) => {
@@ -157,4 +157,38 @@ export const getFriends = asyncHandler(async (req, res, next) => {
   ];
 
   return res.status(200).json({ success: true, friends: friendsList });
+});
+
+export const getPendingRequests = asyncHandler(async (req, res, next) => {
+  const userId = req.userId as string;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      receivedFriendRequests: {
+        where: { status: "PENDING" },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError("No such user", 404);
+  }
+
+  const pendingRequests = user.receivedFriendRequests.map((req) => ({
+    ...req.sender,
+  }));
+
+  return res.status(200).json({ success: true, pendingRequests });
 });
