@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 declare global {
   namespace Express {
@@ -16,11 +16,11 @@ declare global {
 }
 
 import userRoutes from "./routes/user.routes";
-import requestRoute from "./routes/request.route"
+import requestRoute from "./routes/request.route";
 import { errorMiddleware } from "./middleware/error.middleware";
 
 app.use("/api", userRoutes);
-app.use("/api/request" , requestRoute)
+app.use("/api/request", requestRoute);
 
 app.use(errorMiddleware);
 

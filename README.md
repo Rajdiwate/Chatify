@@ -1,6 +1,10 @@
 TODO --->
 
 
+# Redis -->
+    setup Redis for cache
+        store user details to get on "/me" route
+
 # Frontend -->
     setup -> 
         add axios ,react router dom , typscrit , tailwindcss , redux tooklit and configure them

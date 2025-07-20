@@ -8,6 +8,7 @@ import { AppError } from "../utils/AppError";
 
 export const signin = asyncHandler(async (req, res, next) => {
   const parsedData = signInSchema.safeParse(req.body);
+  console.log(req.body);
   if (!parsedData.success) {
     throw new AppError("Incorrect Details", 400);
   }
@@ -36,7 +37,7 @@ export const signin = asyncHandler(async (req, res, next) => {
   return res
     .status(200)
     .cookie("authToken", authToken, {
-      sameSite: true,
+      sameSite: "lax",
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       httpOnly: true, // Prevents XSS attacks
@@ -87,7 +88,7 @@ export const signup = asyncHandler(async (req, res, next) => {
   return res
     .status(200)
     .cookie("authToken", authToken, {
-      sameSite: true,
+      sameSite: "lax",
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       httpOnly: true, // Prevents XSS attacks
