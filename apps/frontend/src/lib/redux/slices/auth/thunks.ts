@@ -11,7 +11,7 @@ import {
   getPendingRequestsRequest,
   signInRequest,
   signUpRequest,
-} from "../../../../api/auth.api";
+} from "../../../../api/user.api";
 
 export const signupThunk = createAsyncThunk<
   dbUser,
