@@ -6,18 +6,26 @@ TODO --->
         store user details to get on "/me" route
 
 # Frontend -->
-    setup -> 
-        create home page  
-            which will have header containing logo , searchBar with placeholder "search for people" and "profile" 
-            below the header divider it in 2 sections. right one chatbox ,left one  friend selection section
-            in friend selection section , give a header which will have a selctor slidebar for choosing between friends and groups. 
-            in friend selection section  , below the header it should display the cards of user and gropus based on the selctor slidebar
-            in chat box section , give a header which will have the username and lastseen  aligned on left
-            in chat box section , below the header  , it should take the rest of the height and display the chats. 
-            at bottom of chat box section , it should have a input feild and button to send message.
+    friend section ->
+        create friendsSlice which should store the details of friends of user
+        integrate getaFriends api and create thunk for storing data in slice. 
+        display friends of user on the home page in the friends section.
+
+    display pending request ->
+        create design for displaying user friend requests ("PENDING") and give option to accept them
+
+    search users -> 
+        hit  /getAllUsers?username=abc api basend on what user types and get all details
+        create dropdown displaying the search results
+        give option to chat with them if friends or send friend request if not friends
+
+
+    
 
 
 # API --> 
+    update signin , signup , getCurrentUser apis --> send the pending request array 
+    GET  /getAllUsers?username=abc ----------> should also send the status of is the current user is friends with them or not
     POST /create-group
     POST /join-group
     POST /send-message
