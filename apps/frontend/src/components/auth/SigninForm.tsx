@@ -1,6 +1,6 @@
 import { Paper, Typography, Box, Alert } from "@mui/material";
-import { CustomInput } from "./custom-input";
-import { CustomButton } from "./custom-button";
+import { CustomInput } from "../ui/custom-input";
+import { CustomButton } from "../ui/custom-button";
 import { Link } from "react-router-dom";
 import { useAppSelector } from "../../lib/hooks/redux";
 import { useForm } from "react-hook-form";
