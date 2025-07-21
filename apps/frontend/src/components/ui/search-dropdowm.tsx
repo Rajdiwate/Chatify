@@ -1,24 +1,22 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Paper, Box, Typography, Divider } from "@mui/material"
-import { Search, Users, Clock } from "lucide-react"
-import { SearchResultItem } from "./search-result-item"
-import { LoadingSpinner } from "../loading/loading-spinner"
-import type { searchResultUser } from "../../lib/redux/slices/auth/types"
-
-
+import { useState, useEffect, useRef } from "react";
+import { Paper, Box, Typography, Divider } from "@mui/material";
+import { Search, Users, Clock } from "lucide-react";
+import { SearchResultItem } from "./search-result-item";
+import { LoadingSpinner } from "../loading/loading-spinner";
+import type { searchResultUser } from "../../lib/redux/slices/auth/types";
 
 interface SearchDropdownProps {
-  isOpen: boolean
-  onClose: () => void
-  searchQuery: string
-  searchResult : searchResultUser[],
-  setSearchResults: React.Dispatch<React.SetStateAction<searchResultUser[]>>
-  isLoading : boolean,
-  onChat?: (userId: string) => void
-  onAddFriend?: (userId: string) => void
-  onAcceptRequest?: (userId: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  searchQuery: string;
+  searchResult: searchResultUser[];
+  setSearchResults: React.Dispatch<React.SetStateAction<searchResultUser[]>>;
+  isLoading: boolean;
+  onChat?: (userId: string) => void;
+  onAddFriend: (userId: string) => void;
+  onAcceptRequest: (userId: string) => Promise<void>;
 }
 
 export function SearchDropdown({
@@ -32,109 +30,98 @@ export function SearchDropdown({
   onAddFriend,
   onAcceptRequest,
 }: SearchDropdownProps) {
-  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set())
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  
-  // Handle search
-  // useEffect(() => {
-  //   if (!searchQuery.trim()) {
-  //     setSearchResults([])
-  //     return
-  //   }
-
-  //   setIsLoading(true)
-
-  //   // Simulate API call delay
-  //   const timeoutId = setTimeout(() => {
-  //     const filtered = mockUsers.filter(
-  //       (user) =>
-  //         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         user.username?.toLowerCase().includes(searchQuery.toLowerCase()),
-  //     )
-  //     setSearchResults(filtered)
-  //     setIsLoading(false)
-  //   }, 300)
-
-  //   return () => clearTimeout(timeoutId)
-  // }, [searchQuery])
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onClose()
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        onClose();
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isOpen, onClose])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   const handleChat = async (userId: string) => {
-    setProcessingIds((prev) => new Set(prev).add(userId))
+    setProcessingIds((prev) => new Set(prev).add(userId));
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      onChat?.(userId)
-      onClose()
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      onChat?.(userId);
+      onClose();
     } finally {
       setProcessingIds((prev) => {
-        const newSet = new Set(prev)
-        newSet.delete(userId)
-        return newSet
-      })
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
+      });
     }
-  }
+  };
 
   const handleAddFriend = async (userId: string) => {
-    setProcessingIds((prev) => new Set(prev).add(userId))
+    setProcessingIds((prev) => new Set(prev).add(userId));
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       // Update the user's relationship status to "request_sent"
       setSearchResults((prev) =>
-        prev.map((user) => (user.id === userId ? { ...user, relationshipStatus: "request_sent" } : user)),
-      )
-      onAddFriend?.(userId)
+        prev.map((user) =>
+          user.id === userId
+            ? { ...user, relationshipStatus: "request_sent" }
+            : user
+        )
+      );
+      onAddFriend?.(userId);
     } finally {
       setProcessingIds((prev) => {
-        const newSet = new Set(prev)
-        newSet.delete(userId)
-        return newSet
-      })
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
+      });
     }
-  }
+  };
 
   const handleAcceptRequest = async (userId: string) => {
-    setProcessingIds((prev) => new Set(prev).add(userId))
+    setProcessingIds((prev) => new Set(prev).add(userId));
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      // Update the user's relationship status to "friend"
+      await onAcceptRequest(userId);
       setSearchResults((prev) =>
-        prev.map((user) => (user.id === userId ? { ...user, relationshipStatus: "friend" } : user)),
-      )
-      onAcceptRequest?.(userId)
+        prev.map((user) =>
+          user.id === userId ? { ...user, relationshipStatus: "friend" } : user
+        )
+      );
     } finally {
       setProcessingIds((prev) => {
-        const newSet = new Set(prev)
-        newSet.delete(userId)
-        return newSet
-      })
+        const newSet = new Set(prev);
+        newSet.delete(userId);
+        return newSet;
+      });
     }
-  }
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const groupedResults = {
     self: searchResult.filter((user) => user.relationshipStatus === "self"),
-    friends: searchResult.filter((user) => user.relationshipStatus === "friend"),
-    requests: searchResult.filter((user) => user.relationshipStatus === "request_received"),
-    others: searchResult.filter((user) => ["not_friend", "request_sent"].includes(user.relationshipStatus)),
-  }
+    friends: searchResult.filter(
+      (user) => user.relationshipStatus === "friend"
+    ),
+    requests: searchResult.filter(
+      (user) => user.relationshipStatus === "request_received"
+    ),
+    others: searchResult.filter((user) =>
+      ["not_friend", "request_sent"].includes(user.relationshipStatus)
+    ),
+  };
 
   return (
     <Paper
@@ -177,7 +164,10 @@ export function SearchDropdown({
           {groupedResults.friends.length > 0 && (
             <Box>
               <Box className="px-3 py-2 bg-gray-50">
-                <Typography variant="caption" className="text-gray-600 font-medium flex items-center gap-1">
+                <Typography
+                  variant="caption"
+                  className="text-gray-600 font-medium flex items-center gap-1"
+                >
                   <Users className="w-3 h-3" />
                   Friends
                 </Typography>
@@ -200,7 +190,10 @@ export function SearchDropdown({
           {groupedResults.requests.length > 0 && (
             <Box>
               <Box className="px-3 py-2 bg-gray-50">
-                <Typography variant="caption" className="text-gray-600 font-medium flex items-center gap-1">
+                <Typography
+                  variant="caption"
+                  className="text-gray-600 font-medium flex items-center gap-1"
+                >
                   <Clock className="w-3 h-3" />
                   Friend Requests
                 </Typography>
@@ -223,7 +216,10 @@ export function SearchDropdown({
           {groupedResults.others.length > 0 && (
             <Box>
               <Box className="px-3 py-2 bg-gray-50">
-                <Typography variant="caption" className="text-gray-600 font-medium">
+                <Typography
+                  variant="caption"
+                  className="text-gray-600 font-medium"
+                >
                   Other Users
                 </Typography>
               </Box>
@@ -242,5 +238,5 @@ export function SearchDropdown({
         </Box>
       )}
     </Paper>
-  )
+  );
 }

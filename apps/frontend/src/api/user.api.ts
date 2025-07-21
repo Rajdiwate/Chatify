@@ -73,3 +73,4 @@ export const getSearchUserRequest = async function (searchString: string) {
     return errorData;
   }
 };
+

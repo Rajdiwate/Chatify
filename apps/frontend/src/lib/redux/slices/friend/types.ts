@@ -17,3 +17,11 @@ export type TGetFriendsResponse = {
     success : true,
     friends : friends
 }
+
+export type TAcceptRequestResponse = TGetFriendsResponse
+
+export type TSendRequestResponse = {
+  success : true , 
+  friendRequest : unknown
+
+}

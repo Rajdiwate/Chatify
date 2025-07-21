@@ -1,16 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { TFriendState } from "./types";
-import { getFriendsThunk } from "./thunks";
+import { acceptFriendRequestThunk, getFriendsThunk } from "./thunks";
+
 
 const initialState: TFriendState = {
   loading: false,
-  fetched :false
+  fetched: false,
 };
 
 export const friendSlice = createSlice({
   name: "Friend",
   initialState,
-  reducers: {},
+  reducers: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sendRequest: (state, action) => {
+      // no-op: just a signal for middleware
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getFriendsThunk.pending, (state) => {
@@ -20,9 +26,24 @@ export const friendSlice = createSlice({
       .addCase(getFriendsThunk.fulfilled, (state, action) => {
         state.friends = action.payload;
         state.loading = false;
-        state.fetched = true
+        state.fetched = true;
       })
       .addCase(getFriendsThunk.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      });
+
+    builder
+      .addCase(acceptFriendRequestThunk.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(acceptFriendRequestThunk.fulfilled, (state, action) => {
+        state.friends = action.payload;
+        state.loading = false;
+        state.fetched = true;
+      })
+      .addCase(acceptFriendRequestThunk.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });
@@ -30,3 +51,4 @@ export const friendSlice = createSlice({
 });
 
 export default friendSlice.reducer;
+export const {sendRequest} = friendSlice.actions

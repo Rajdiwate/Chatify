@@ -5,9 +5,15 @@
     setup Redis for cache
         store user details to get on "/me" route
 
+## BUGS -->
+    (clear db ,create new users and test)
+    even after request is sent  , the status is not_friend 
+    send number of pending reqs with the user data to display 
+    friends section not updating after req is accepted
+
+
 ## Frontend -->
-    integrate send request api
-    integrate accept request api
+
 
 ## API --> 
     POST /create-group

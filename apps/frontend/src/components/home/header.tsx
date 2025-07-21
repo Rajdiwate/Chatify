@@ -19,6 +19,8 @@ import { SearchDropdown } from "../ui/search-dropdowm";
 import { getSearchUserRequest } from "../../api/user.api";
 import type { searchResultUser } from "../../lib/redux/slices/auth/types";
 import { useDebounce } from "../../lib/hooks/useDebounce";
+import { sendRequest } from "../../lib/redux/slices/friend/FriendSlice";
+import { acceptFriendRequestThunk } from "../../lib/redux/slices/friend/thunks";
 
 export function Header() {
   const [friendRequestAnchor, setFriendRequestAnchor] =
@@ -87,12 +89,12 @@ export function Header() {
 
   const handleAddFriend = (userId: string) => {
     console.log("Adding friend:", userId);
-    // Send friend request
+    dispatch(sendRequest({receiverId : userId}))
   };
 
-  const handleAcceptRequest = (userId: string) => {
+  const handleAcceptRequest = async (userId: string) => {
     console.log("Accepting friend request from:", userId);
-    // Accept friend request
+    await dispatch(acceptFriendRequestThunk({senderId : userId})).unwrap()
   };
 
   return (

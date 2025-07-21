@@ -37,9 +37,12 @@ export const acceptRequest = asyncHandler(async (req, res, next) => {
   // get the userId from the req
   const currentUserId = req.userId as string;
 
-  //chek if the reciever Id of the request is same as that of the userId
-  let friendRequest = await prisma.friendRequest.findUnique({
-    where: { id: parsedData.data.id },
+  //chek if the receiver Id of the request is same as that of the userId
+  let friendRequest = await prisma.friendRequest.findFirst({
+    where: { AND : {
+      senderId : parsedData.data.senderId,
+      receiverId : currentUserId,
+    } },
   });
   if (friendRequest?.status !== "PENDING") {
     throw new AppError("Friend request already processed", 400);
@@ -52,7 +55,49 @@ export const acceptRequest = asyncHandler(async (req, res, next) => {
     where: { id: friendRequest.id },
     data: { status: "ACCEPTED" },
   });
-  return res.status(200).json({ success: true, friendRequest });
+
+  const friends = await prisma.user.findUnique({
+    where: {
+      id: currentUserId,
+    },
+    include: {
+      sentFriendRequests: {
+        where: { status: "ACCEPTED" },
+        include: {
+          receiver: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+        },
+      },
+      receivedFriendRequests: {
+        where: { status: "ACCEPTED" },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!friends) {
+    throw new AppError("No User with this Id", 404);
+  }
+
+  const friendsList = [
+    ...friends.sentFriendRequests.map((req) => req.receiver),
+    ...friends.receivedFriendRequests.map((req) => req.sender),
+  ];
+
+  return res.status(200).json({ success: true, friendsList });
 
   // dont create a conversation for the user.
   // conversation can be created during send-message api
