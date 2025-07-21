@@ -47,3 +47,15 @@ export type THttpError = {
   success: false;
   message: string;
 };
+export type UserRelationshipStatus = "friend" | "not_friend" | "request_sent" | "request_received" | "self"
+export type searchResultUser = {
+  id: string;
+  username: string;
+  email: string;
+  relationshipStatus: UserRelationshipStatus;
+};
+
+export type searchResultResponse ={
+  success : true,
+  users : searchResultUser[]
+}

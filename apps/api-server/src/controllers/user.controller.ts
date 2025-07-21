@@ -94,7 +94,7 @@ export const signup = asyncHandler(async (req, res, next) => {
       httpOnly: true, // Prevents XSS attacks
       secure: process.env.NODE_ENV === "production", // Only send over HTTPS (in production)
     })
-    .json({ success: true, user});
+    .json({ success: true, user });
 });
 
 export const getCurrentUser = asyncHandler(async (req, res, next) => {
@@ -191,4 +191,108 @@ export const getPendingRequests = asyncHandler(async (req, res, next) => {
   }));
 
   return res.status(200).json({ success: true, pendingRequests });
+});
+
+export const getAllUsers = asyncHandler(async (req, res, next) => {
+  const param = req.query;
+  const searchString = param.searchString as string;
+  const userId = req.userId as string;
+
+  // get all users from the db
+  const allUsers: {
+    id: string;
+    username: string;
+    email: string;
+    relationshipStatus?: string;
+  }[] = await prisma.user.findMany({
+    select: {
+      username: true,
+      id: true,
+      email: true,
+    },
+  });
+
+  const currentUser = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      sentFriendRequests: {
+        select: {
+          receiver: { select: { id: true } },
+          sender: { select: { id: true } },
+          status: true,
+        },
+      },
+      receivedFriendRequests: {
+        select: {
+          sender: { select: { id: true } },
+          receiver: { select: { id: true } },
+          status: true,
+        },
+      },
+    },
+  });
+
+  if (!currentUser) {
+    throw new AppError("No such user", 404);
+  }
+
+  // Create a Set of friend IDs for efficient lookup
+  const friendsIdSet = new Set([
+    ...currentUser.sentFriendRequests.map((req) => {
+      if (req.status === "ACCEPTED") return req.receiver.id;
+    }),
+    ...currentUser.receivedFriendRequests.map((req) => {
+      if (req.status === "ACCEPTED") return req.sender.id;
+    }),
+  ]);
+
+  // ids of users who sent req to current user and are pending
+  const recievedReqIdSet = new Set([
+    ...currentUser.receivedFriendRequests.map((req) => {
+      if (req.status === "PENDING") return req.sender.id;
+    }),
+  ]);
+
+  // ids of users to whom current user sent req and is pending
+  const sentReqIdSet = new Set([
+    ...currentUser.receivedFriendRequests.map((req) => {
+      if (req.status === "PENDING") return req.sender.id;
+    }),
+  ]);
+
+  // Add friendship status to each user
+  const allUsersWithrelationshipStatus = allUsers.map((user) => {
+    // self
+    if (user.id === currentUser.id) {
+      user.relationshipStatus = "self";
+    }
+    // friend
+    else if (friendsIdSet.has(user.id)) {
+      user.relationshipStatus = "friend";
+    }
+    // request_received
+    else if (recievedReqIdSet.has(user.id)) {
+      user.relationshipStatus = "request_received";
+    } 
+    //request_sent
+    else if (sentReqIdSet.has(user.id)) {
+      user.relationshipStatus = "request_sent";
+    } 
+    // not_friend
+    else user.relationshipStatus = "not_friend";
+
+    return user;
+  });
+
+  // Filter by search string if provided
+  if (searchString) {
+    const filteredUsers = allUsersWithrelationshipStatus.filter((user) =>
+      user.username.toLowerCase().includes(searchString.toLowerCase())
+    );
+    return res.status(200).json({ success: true, users: filteredUsers });
+  }
+
+  return res
+    .status(200)
+    .json({ success: true, users: allUsersWithrelationshipStatus });
 });

@@ -11,24 +11,39 @@ import {
   FriendRequestButton,
   FriendRequestPopover,
 } from "../ui/friend-request-popover";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useAppHelpers } from "../../lib/hooks/useAppHelpers";
 import { getPendingRequestsThunk } from "../../lib/redux/slices/auth/thunks";
 import { SearchDropdown } from "../ui/search-dropdowm";
+import { getSearchUserRequest } from "../../api/user.api";
+import type { searchResultUser } from "../../lib/redux/slices/auth/types";
 import { useDebounce } from "../../lib/hooks/useDebounce";
 
 export function Header() {
   const [friendRequestAnchor, setFriendRequestAnchor] =
     useState<HTMLElement | null>(null);
   const [isLoadingRequests, setIsLoadingRequests] = useState(false);
-
+  const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [searchResult, setSearchResult] = useState<searchResultUser[]>([]);
   const { dispatch } = useAppHelpers();
   const { pendingRequests } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const debouncedSetSearch = useDebounce(setSearchQuery, 3000);
+  // const debouncedSetSearch = useDebounce(setSearchQuery, 3000);
+
+  const getSearchResults = async (query: string) => {
+    setIsLoadingSearch(true);
+    const data = await getSearchUserRequest(query);
+    if (data.success) {
+      setIsLoadingSearch(false);
+      return data.users;
+    } else {
+      setIsLoadingSearch(false);
+      return [];
+    }
+  };
   const handleFriendRequestClick = async (
     event: React.MouseEvent<HTMLElement>
   ) => {
@@ -49,9 +64,21 @@ export function Header() {
     setIsSearchFocused(false);
   };
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSetSearch(event.target.value);
-  };
+   const debouncedSearch = useDebounce(async (value: string) => {
+    const searchedUsers = await getSearchResults(value);
+    setSearchResult(searchedUsers);
+  }, 500); // 500ms debounce delay
+
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setSearchQuery(value);
+      if (value !== "") {
+        debouncedSearch(value);
+      }
+    },
+    [debouncedSearch]
+  );
 
   const handleChat = (userId: string) => {
     console.log("Starting chat with user:", userId);
@@ -107,9 +134,11 @@ export function Header() {
                 {/* Search Dropdown */}
                 <SearchDropdown
                   isOpen={isSearchFocused}
+                  isLoading={isLoadingSearch}
+                  setSearchResults={setSearchResult}
                   onClose={handleSearchClose}
                   searchQuery={searchQuery}
-                  onSearchChange={setSearchQuery}
+                  searchResult={searchResult}
                   onChat={handleChat}
                   onAddFriend={handleAddFriend}
                   onAcceptRequest={handleAcceptRequest}
@@ -126,7 +155,7 @@ export function Header() {
           <Box className="flex items-center gap-2">
             <Avatar className="w-8 h-8 bg-blue-500 cursor-pointer">
               <Typography variant="body2" className="text-white font-semibold">
-                U
+                ME
               </Typography>
             </Avatar>
             <Typography

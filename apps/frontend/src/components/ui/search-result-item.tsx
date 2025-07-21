@@ -1,12 +1,12 @@
 import { Box, Avatar, Typography, IconButton, Tooltip, Chip } from "@mui/material"
 import { MessageCircle, UserPlus, Check, Clock, Circle } from "lucide-react"
+import type { UserRelationshipStatus } from "../../lib/redux/slices/auth/types"
 
-export type UserRelationshipStatus = "friend" | "not_friend" | "request_sent" | "request_received" | "self"
+
 
 interface SearchResultItemProps {
   id: string
-  name: string
-  username?: string
+  username: string
   avatar?: string
   isOnline?: boolean
   mutualFriends?: number
@@ -19,7 +19,6 @@ interface SearchResultItemProps {
 
 export function SearchResultItem({
   id,
-  name,
   username,
   avatar,
   isOnline = false,
@@ -98,8 +97,8 @@ export function SearchResultItem({
     <Box className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors">
       {/* Avatar */}
       <div className="relative flex-shrink-0">
-        <Avatar src={avatar} alt={name} className="w-10 h-10" sx={{ bgcolor: "#3b82f6" }}>
-          {name.charAt(0).toUpperCase()}
+        <Avatar src={avatar} alt={username.charAt(0).toLocaleUpperCase()} className="w-10 h-10" sx={{ bgcolor: "#3b82f6" }}>
+          {username.charAt(0).toUpperCase()}
         </Avatar>
         {isOnline && <Circle className="absolute -bottom-1 -right-1 w-3 h-3 text-green-500 fill-current" />}
       </div>
@@ -107,7 +106,7 @@ export function SearchResultItem({
       {/* User Info */}
       <Box className="flex-1 min-w-0">
         <Typography variant="subtitle2" className="font-semibold text-gray-900 truncate">
-          {name}
+          {username}
         </Typography>
         <Box className="flex items-center gap-2">
           {username && (

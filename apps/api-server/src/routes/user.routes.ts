@@ -6,6 +6,7 @@ import {
   getPendingRequests,
   signin,
   signup,
+  getAllUsers
 } from "../controllers/user.controller";
 
 const router = Router();
@@ -15,5 +16,6 @@ router.route("/signin").post(signin);
 router.route("/me").get(authMiddleware, getCurrentUser);
 router.route("/friends").get(authMiddleware, getFriends);
 router.route("/requests/pending").get(authMiddleware, getPendingRequests);
+router.route("/all-users").get(authMiddleware, getAllUsers);
 
 export default router as Router;

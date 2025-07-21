@@ -3,131 +3,61 @@
 import { useState, useEffect, useRef } from "react"
 import { Paper, Box, Typography, Divider } from "@mui/material"
 import { Search, Users, Clock } from "lucide-react"
-import { SearchResultItem, type UserRelationshipStatus } from "./search-result-item"
+import { SearchResultItem } from "./search-result-item"
 import { LoadingSpinner } from "../loading/loading-spinner"
+import type { searchResultUser } from "../../lib/redux/slices/auth/types"
 
-interface SearchUser {
-  id: string
-  name: string
-  username?: string
-  avatar?: string
-  isOnline?: boolean
-  mutualFriends?: number
-  relationshipStatus: UserRelationshipStatus
-}
+
 
 interface SearchDropdownProps {
   isOpen: boolean
   onClose: () => void
   searchQuery: string
-  onSearchChange: (query: string) => void
+  searchResult : searchResultUser[],
+  setSearchResults: React.Dispatch<React.SetStateAction<searchResultUser[]>>
+  isLoading : boolean,
   onChat?: (userId: string) => void
   onAddFriend?: (userId: string) => void
   onAcceptRequest?: (userId: string) => void
 }
 
-// Mock search data
-const mockUsers: SearchUser[] = [
-  {
-    id: "current_user",
-    name: "You",
-    username: "currentuser",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isOnline: true,
-    relationshipStatus: "self",
-  },
-  {
-    id: "1",
-    name: "Alice Johnson",
-    username: "alice_j",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isOnline: true,
-    mutualFriends: 3,
-    relationshipStatus: "friend",
-  },
-  {
-    id: "2",
-    name: "Bob Smith",
-    username: "bobsmith",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isOnline: false,
-    mutualFriends: 1,
-    relationshipStatus: "not_friend",
-  },
-  {
-    id: "3",
-    name: "Carol Davis",
-    username: "carol_d",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isOnline: true,
-    mutualFriends: 5,
-    relationshipStatus: "request_sent",
-  },
-  {
-    id: "4",
-    name: "David Wilson",
-    username: "davidw",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isOnline: false,
-    mutualFriends: 2,
-    relationshipStatus: "request_received",
-  },
-  {
-    id: "5",
-    name: "Emma Brown",
-    username: "emma_b",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isOnline: true,
-    mutualFriends: 0,
-    relationshipStatus: "not_friend",
-  },
-  {
-    id: "6",
-    name: "Frank Miller",
-    username: "frank_m",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isOnline: false,
-    mutualFriends: 4,
-    relationshipStatus: "friend",
-  },
-]
-
 export function SearchDropdown({
   isOpen,
   onClose,
   searchQuery,
-  onSearchChange,
+  searchResult,
+  setSearchResults,
+  isLoading,
   onChat,
   onAddFriend,
   onAcceptRequest,
 }: SearchDropdownProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [searchResults, setSearchResults] = useState<SearchUser[]>([])
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set())
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  
   // Handle search
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSearchResults([])
-      return
-    }
+  // useEffect(() => {
+  //   if (!searchQuery.trim()) {
+  //     setSearchResults([])
+  //     return
+  //   }
 
-    setIsLoading(true)
+  //   setIsLoading(true)
 
-    // Simulate API call delay
-    const timeoutId = setTimeout(() => {
-      const filtered = mockUsers.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.username?.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-      setSearchResults(filtered)
-      setIsLoading(false)
-    }, 300)
+  //   // Simulate API call delay
+  //   const timeoutId = setTimeout(() => {
+  //     const filtered = mockUsers.filter(
+  //       (user) =>
+  //         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //         user.username?.toLowerCase().includes(searchQuery.toLowerCase()),
+  //     )
+  //     setSearchResults(filtered)
+  //     setIsLoading(false)
+  //   }, 300)
 
-    return () => clearTimeout(timeoutId)
-  }, [searchQuery])
+  //   return () => clearTimeout(timeoutId)
+  // }, [searchQuery])
 
   // Handle click outside
   useEffect(() => {
@@ -200,10 +130,10 @@ export function SearchDropdown({
   if (!isOpen) return null
 
   const groupedResults = {
-    self: searchResults.filter((user) => user.relationshipStatus === "self"),
-    friends: searchResults.filter((user) => user.relationshipStatus === "friend"),
-    requests: searchResults.filter((user) => user.relationshipStatus === "request_received"),
-    others: searchResults.filter((user) => ["not_friend", "request_sent"].includes(user.relationshipStatus)),
+    self: searchResult.filter((user) => user.relationshipStatus === "self"),
+    friends: searchResult.filter((user) => user.relationshipStatus === "friend"),
+    requests: searchResult.filter((user) => user.relationshipStatus === "request_received"),
+    others: searchResult.filter((user) => ["not_friend", "request_sent"].includes(user.relationshipStatus)),
   }
 
   return (
@@ -217,7 +147,7 @@ export function SearchDropdown({
         <Box className="flex justify-center py-6">
           <LoadingSpinner size={32} />
         </Box>
-      ) : searchResults.length === 0 ? (
+      ) : searchResult.length === 0 ? (
         <Box className="text-center py-6">
           <Search className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <Typography variant="body2" className="text-gray-600">
