@@ -6,16 +6,14 @@
         store user details to get on "/me" route
 
 ## BUGS -->
-    (clear db ,create new users and test)
-    even after request is sent  , the status is not_friend 
-    send number of pending reqs with the user data to display 
-    friends section not updating after req is accepted
-
 
 ## Frontend -->
-
+    integrate accept request api on the the model of pending requests. comment out the decline request button for now
+    give an option on the friends and groups section to refresh and call the get friends request
+    logout button on heder
 
 ## API --> 
+    logout api
     POST /create-group
     POST /join-group
     POST /send-message

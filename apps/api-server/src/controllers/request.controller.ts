@@ -97,7 +97,7 @@ export const acceptRequest = asyncHandler(async (req, res, next) => {
     ...friends.receivedFriendRequests.map((req) => req.sender),
   ];
 
-  return res.status(200).json({ success: true, friendsList });
+  return res.status(200).json({ success: true, friends :friendsList });
 
   // dont create a conversation for the user.
   // conversation can be created during send-message api

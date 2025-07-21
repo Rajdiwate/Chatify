@@ -29,7 +29,7 @@ export function Header() {
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [searchResult, setSearchResult] = useState<searchResultUser[]>([]);
   const { dispatch } = useAppHelpers();
-  const { pendingRequests } = useAuth();
+  const { pendingRequests, user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -66,7 +66,7 @@ export function Header() {
     setIsSearchFocused(false);
   };
 
-   const debouncedSearch = useDebounce(async (value: string) => {
+  const debouncedSearch = useDebounce(async (value: string) => {
     const searchedUsers = await getSearchResults(value);
     setSearchResult(searchedUsers);
   }, 500); // 500ms debounce delay
@@ -89,12 +89,12 @@ export function Header() {
 
   const handleAddFriend = (userId: string) => {
     console.log("Adding friend:", userId);
-    dispatch(sendRequest({receiverId : userId}))
+    dispatch(sendRequest({ receiverId: userId }));
   };
 
   const handleAcceptRequest = async (userId: string) => {
     console.log("Accepting friend request from:", userId);
-    await dispatch(acceptFriendRequestThunk({senderId : userId})).unwrap()
+    await dispatch(acceptFriendRequestThunk({ senderId: userId })).unwrap();
   };
 
   return (
@@ -147,7 +147,7 @@ export function Header() {
                 />
               </Box>
               <FriendRequestButton
-                requestCount={pendingRequests.length}
+                requestCount={user?.pendingRequestsNumber || 0}
                 onClick={handleFriendRequestClick}
               />
             </Box>

@@ -16,6 +16,7 @@ export const signin = asyncHandler(async (req, res, next) => {
   // check if user exists in db
   const user = await prisma.user.findUnique({
     where: { email: parsedData.data.email },
+    include: { receivedFriendRequests: { where: { status: "PENDING" } } },
   });
 
   if (!user) {
@@ -31,6 +32,9 @@ export const signin = asyncHandler(async (req, res, next) => {
     throw new AppError("Incorrect credentials", 400);
   }
 
+  const pendingRequestsNumber = user.receivedFriendRequests.length;
+  const { receivedFriendRequests, ...userWithoutPendingReqs } = user;
+
   // user exists --> gnerate token and send in cookies
   const authToken = signJwt({ userId: user.id });
 
@@ -43,7 +47,10 @@ export const signin = asyncHandler(async (req, res, next) => {
       httpOnly: true, // Prevents XSS attacks
       secure: process.env.NODE_ENV === "production", // Only send over HTTPS (in production)
     })
-    .json({ success: true, user });
+    .json({
+      success: true,
+      user: { ...userWithoutPendingReqs, pendingRequestsNumber },
+    });
 });
 
 export const signup = asyncHandler(async (req, res, next) => {
@@ -94,7 +101,7 @@ export const signup = asyncHandler(async (req, res, next) => {
       httpOnly: true, // Prevents XSS attacks
       secure: process.env.NODE_ENV === "production", // Only send over HTTPS (in production)
     })
-    .json({ success: true, user });
+    .json({ success: true, user: { ...user, pendingRequestsNumber: 0 } });
 });
 
 export const getCurrentUser = asyncHandler(async (req, res, next) => {
@@ -103,13 +110,20 @@ export const getCurrentUser = asyncHandler(async (req, res, next) => {
     where: {
       id: userId,
     },
+    include: { receivedFriendRequests: { where: { status: "PENDING" } } },
   });
 
   if (!user) {
     throw new AppError("No such user", 404);
   }
 
-  return res.status(200).json({ success: true, user });
+  const pendingRequestsNumber = user.receivedFriendRequests.length;
+  const { receivedFriendRequests, ...userWithoutRecievedRequests } = user;
+
+  return res.status(200).json({
+    success: true,
+    user: { ...userWithoutRecievedRequests, pendingRequestsNumber },
+  });
 });
 
 export const getFriends = asyncHandler(async (req, res, next) => {
@@ -255,8 +269,8 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
 
   // ids of users to whom current user sent req and is pending
   const sentReqIdSet = new Set([
-    ...currentUser.receivedFriendRequests.map((req) => {
-      if (req.status === "PENDING") return req.sender.id;
+    ...currentUser.sentFriendRequests.map((req) => {
+      if (req.status === "PENDING") return req.receiver.id;
     }),
   ]);
 
@@ -273,11 +287,11 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     // request_received
     else if (recievedReqIdSet.has(user.id)) {
       user.relationshipStatus = "request_received";
-    } 
+    }
     //request_sent
     else if (sentReqIdSet.has(user.id)) {
       user.relationshipStatus = "request_sent";
-    } 
+    }
     // not_friend
     else user.relationshipStatus = "not_friend";
 

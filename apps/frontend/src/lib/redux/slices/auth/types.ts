@@ -12,6 +12,7 @@ export type dbUser = {
   displayName: string | null;
   avatarUrl: string | null;
   phoneNumber: string | null;
+  pendingRequestsNumber : number
   lastSeen: Date;
   createdAt: Date;
   updatedAt: Date;
