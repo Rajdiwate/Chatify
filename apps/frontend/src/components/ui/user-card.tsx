@@ -1,4 +1,4 @@
-import { Paper, Avatar, Typography, Box} from "@mui/material";
+import { Paper, Avatar, Typography, Box } from "@mui/material";
 
 import type { dbFriend } from "../../lib/redux/slices/conversation/types";
 

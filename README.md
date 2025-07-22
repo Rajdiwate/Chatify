@@ -7,17 +7,10 @@
 
 ## BUGS -->
 
-    accepting request from anywhere should sync in the search results and pending requests
-
 ## Frontend -->
 
-    on home page , getConversation req wil be called
-    on req accept , you will get the created conversation.
-    push this conversation in the state.
-
-    clear states of all slices when logout
-
     create a slice for storing current selected chat user , chats  , states to update the chat
+    on clicking on a chat , the currentConvId should be updated , and the chat should be displayed on the chatBox
 
 ## API -->
 
