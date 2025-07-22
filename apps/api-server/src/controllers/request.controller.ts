@@ -37,68 +37,81 @@ export const acceptRequest = asyncHandler(async (req, res, next) => {
   // get the userId from the req
   const currentUserId = req.userId as string;
 
-  //chek if the receiver Id of the request is same as that of the userId
+  // check if the receiver Id of the request is same as that of the userId
   let friendRequest = await prisma.friendRequest.findFirst({
-    where: { AND : {
-      senderId : parsedData.data.senderId,
-      receiverId : currentUserId,
-    } },
+    where: {
+      AND: {
+        senderId: parsedData.data.senderId,
+        receiverId: currentUserId,
+      },
+    },
   });
+
   if (friendRequest?.status !== "PENDING") {
     throw new AppError("Friend request already processed", 400);
   }
   if (!friendRequest || friendRequest.receiverId !== currentUserId) {
     throw new AppError("invalid friend Request", 404);
   }
-  // change the status of friendRequest
-  friendRequest = await prisma.friendRequest.update({
-    where: { id: friendRequest.id },
-    data: { status: "ACCEPTED" },
-  });
 
-  const friends = await prisma.user.findUnique({
-    where: {
-      id: currentUserId,
-    },
-    include: {
-      sentFriendRequests: {
-        where: { status: "ACCEPTED" },
-        include: {
-          receiver: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
+  // Wrap all write operations in a transaction
+  const result = await prisma.$transaction(async (tx) => {
+    // Update the friend request status
+    const updatedFriendRequest = await tx.friendRequest.update({
+      where: { id: friendRequest.id },
+      data: { status: "ACCEPTED" },
+    });
+
+    // Create a Direct conversation between the senderId and userId
+    const conversation = await tx.conversation.create({
+      data: {
+        type: "DIRECT",
+        createdBy: parsedData.data.senderId,
+        members: {
+          create: [
+            {
+              userId: currentUserId,
             },
+            {
+              userId: parsedData.data.senderId,
+            },
+          ],
+        },
+      },
+      include: {
+        members: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              },
+            },
+          },
+          where: {
+            userId: parsedData.data.senderId,
           },
         },
       },
-      receivedFriendRequests: {
-        where: { status: "ACCEPTED" },
-        include: {
-          sender: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-            },
-          },
-        },
-      },
-    },
+    });
+
+    // Return the data we need from the transaction
+    return {
+      friendRequest: updatedFriendRequest,
+      conversation: conversation,
+    };
   });
 
-  if (!friends) {
-    throw new AppError("No User with this Id", 404);
+  // Process the result outside the transaction
+  const convotoSend = {
+    id: result.conversation.id,
+    friend: result.conversation.members[0]?.user,
+  };
+
+  if (!convotoSend || !convotoSend.id || !convotoSend.friend) {
+    throw new AppError("Failed to create conversation", 500);
   }
 
-  const friendsList = [
-    ...friends.sentFriendRequests.map((req) => req.receiver),
-    ...friends.receivedFriendRequests.map((req) => req.sender),
-  ];
-
-  return res.status(200).json({ success: true, friends :friendsList });
-
-  // dont create a conversation for the user.
-  // conversation can be created during send-message api
+  return res.status(200).json({ success: true, conversation: convotoSend });
 });
