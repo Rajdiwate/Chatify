@@ -21,12 +21,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install pnpm
+      run: sudo npm install -g pnpm
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'pnpm'
-    - run : sudo npm install -g pnpm
-    - run: npm install
-    - run: npm run format
-    - run : npm run build
+    - run: pnpm install
+    - run: pnpm run format
+    - run : pnpm run build
