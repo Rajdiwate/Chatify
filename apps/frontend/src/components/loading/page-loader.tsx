@@ -1,12 +1,12 @@
-import { Box, Typography, LinearProgress } from "@mui/material"
-import { LoadingSpinner } from "./loading-spinner"
+import { Box, Typography, LinearProgress } from "@mui/material";
+import { LoadingSpinner } from "./loading-spinner";
 
 interface PageLoaderProps {
-  text?: string
-  showProgress?: boolean
-  progress?: number
-  fullScreen?: boolean
-  className?: string
+  text?: string;
+  showProgress?: boolean;
+  progress?: number;
+  fullScreen?: boolean;
+  className?: string;
 }
 
 export function PageLoader({
@@ -16,10 +16,14 @@ export function PageLoader({
   fullScreen = true,
   className = "",
 }: PageLoaderProps) {
-  const containerClass = fullScreen ? "fixed inset-0 bg-white bg-opacity-90 backdrop-blur-sm z-50" : "w-full h-full"
+  const containerClass = fullScreen
+    ? "fixed inset-0 bg-white bg-opacity-90 backdrop-blur-sm z-50"
+    : "w-full h-full";
 
   return (
-    <Box className={`${containerClass} flex flex-col items-center justify-center ${className}`}>
+    <Box
+      className={`${containerClass} flex flex-col items-center justify-center ${className}`}
+    >
       <Box className="text-center">
         {/* Logo */}
         <Typography variant="h4" className="text-blue-600 font-bold mb-8">
@@ -50,7 +54,10 @@ export function PageLoader({
               }}
             />
             {progress > 0 && (
-              <Typography variant="caption" className="text-gray-500 mt-2 block">
+              <Typography
+                variant="caption"
+                className="text-gray-500 mt-2 block"
+              >
                 {Math.round(progress)}%
               </Typography>
             )}
@@ -63,5 +70,5 @@ export function PageLoader({
         </Typography>
       </Box>
     </Box>
-  )
+  );
 }

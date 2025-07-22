@@ -31,13 +31,13 @@ const authSlice = createSlice({
       if (removedCount > 0 && state.user?.pendingRequestsNumber) {
         state.user.pendingRequestsNumber = Math.max(
           0,
-          state.user.pendingRequestsNumber - removedCount
+          state.user.pendingRequestsNumber - removedCount,
         );
       }
     },
-    resetAuth : ()=>{
-      return initialState
-    }
+    resetAuth: () => {
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -104,4 +104,5 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { reducePendingReq , onRequestAccept ,resetAuth} = authSlice.actions;
+export const { reducePendingReq, onRequestAccept, resetAuth } =
+  authSlice.actions;

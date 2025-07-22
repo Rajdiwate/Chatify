@@ -1,14 +1,13 @@
-import { Box, Paper, Typography } from "@mui/material"
-import { LoadingSpinner } from "./loading-spinner"
-import { ChatMessageSkeleton, UserCardSkeleton } from "./skeleton-loader"
-
+import { Box, Paper, Typography } from "@mui/material";
+import { LoadingSpinner } from "./loading-spinner";
+import { ChatMessageSkeleton, UserCardSkeleton } from "./skeleton-loader";
 
 interface ContentLoaderProps {
-  type?: "spinner" | "skeleton"
-  variant?: "friends" | "chat" | "general"
-  count?: number
-  text?: string
-  className?: string
+  type?: "spinner" | "skeleton";
+  variant?: "friends" | "chat" | "general";
+  count?: number;
+  text?: string;
+  className?: string;
 }
 
 export function ContentLoader({
@@ -20,7 +19,9 @@ export function ContentLoader({
 }: ContentLoaderProps) {
   if (type === "spinner") {
     return (
-      <Box className={`flex flex-col items-center justify-center p-8 ${className}`}>
+      <Box
+        className={`flex flex-col items-center justify-center p-8 ${className}`}
+      >
         <LoadingSpinner size={48} className="mb-4" />
         {text && (
           <Typography variant="body2" className="text-gray-600">
@@ -28,7 +29,7 @@ export function ContentLoader({
           </Typography>
         )}
       </Box>
-    )
+    );
   }
 
   if (variant === "friends") {
@@ -38,7 +39,7 @@ export function ContentLoader({
           <UserCardSkeleton key={index} />
         ))}
       </Box>
-    )
+    );
   }
 
   if (variant === "chat") {
@@ -48,7 +49,7 @@ export function ContentLoader({
           <ChatMessageSkeleton key={index} isOwn={index % 3 === 0} />
         ))}
       </Box>
-    )
+    );
   }
 
   return (
@@ -63,5 +64,5 @@ export function ContentLoader({
         </Paper>
       ))}
     </Box>
-  )
+  );
 }

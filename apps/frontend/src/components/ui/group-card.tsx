@@ -1,16 +1,23 @@
-import { Paper, Avatar, Typography, Box, Chip, AvatarGroup } from "@mui/material"
-import { Users } from "lucide-react"
+import {
+  Paper,
+  Avatar,
+  Typography,
+  Box,
+  Chip,
+  AvatarGroup,
+} from "@mui/material";
+import { Users } from "lucide-react";
 
 interface GroupCardProps {
-  id: string
-  name: string
-  memberCount: number
-  lastMessage?: string
-  timestamp?: string
-  unreadCount?: number
-  isSelected?: boolean
-  memberAvatars?: string[]
-  onClick?: () => void
+  id: string;
+  name: string;
+  memberCount: number;
+  lastMessage?: string;
+  timestamp?: string;
+  unreadCount?: number;
+  isSelected?: boolean;
+  memberAvatars?: string[];
+  onClick?: () => void;
 }
 
 export function GroupCard({
@@ -48,7 +55,10 @@ export function GroupCard({
 
         <Box className="flex-1 min-w-0">
           <Box className="flex items-center justify-between mb-1">
-            <Typography variant="subtitle2" className="font-semibold text-gray-900 truncate">
+            <Typography
+              variant="subtitle2"
+              className="font-semibold text-gray-900 truncate"
+            >
               {name}
             </Typography>
             {timestamp && (
@@ -61,16 +71,23 @@ export function GroupCard({
             {memberCount} members
           </Typography>
           {lastMessage && (
-            <Typography variant="body2" className="text-gray-600 text-sm truncate">
+            <Typography
+              variant="body2"
+              className="text-gray-600 text-sm truncate"
+            >
               {lastMessage}
             </Typography>
           )}
         </Box>
 
         {unreadCount > 0 && (
-          <Chip label={unreadCount} size="small" className="bg-purple-500 text-white text-xs min-w-[20px] h-5" />
+          <Chip
+            label={unreadCount}
+            size="small"
+            className="bg-purple-500 text-white text-xs min-w-[20px] h-5"
+          />
         )}
       </Box>
     </Paper>
-  )
+  );
 }

@@ -77,8 +77,8 @@ export function SearchDropdown({
         prev.map((user) =>
           user.id === userId
             ? { ...user, relationshipStatus: "request_sent" }
-            : user
-        )
+            : user,
+        ),
       );
       onAddFriend?.(userId);
     } finally {
@@ -96,8 +96,8 @@ export function SearchDropdown({
       await onAcceptRequest(userId);
       setSearchResults((prev) =>
         prev.map((user) =>
-          user.id === userId ? { ...user, relationshipStatus: "friend" } : user
-        )
+          user.id === userId ? { ...user, relationshipStatus: "friend" } : user,
+        ),
       );
     } finally {
       setProcessingIds((prev) => {
@@ -113,13 +113,13 @@ export function SearchDropdown({
   const groupedResults = {
     self: searchResult.filter((user) => user.relationshipStatus === "self"),
     friends: searchResult.filter(
-      (user) => user.relationshipStatus === "friend"
+      (user) => user.relationshipStatus === "friend",
     ),
     requests: searchResult.filter(
-      (user) => user.relationshipStatus === "request_received"
+      (user) => user.relationshipStatus === "request_received",
     ),
     others: searchResult.filter((user) =>
-      ["not_friend", "request_sent"].includes(user.relationshipStatus)
+      ["not_friend", "request_sent"].includes(user.relationshipStatus),
     ),
   };
 

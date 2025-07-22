@@ -14,7 +14,7 @@ export type SignupFormData = z.infer<typeof signUpSchema>;
 
 export default function SignupForm() {
   const { loading, error } = useAppSelector((state) => state.auth);
-  const {navigate , dispatch} = useAppHelpers()
+  const { navigate, dispatch } = useAppHelpers();
   const {
     clearErrors,
     handleSubmit,
@@ -27,9 +27,9 @@ export default function SignupForm() {
 
   const onSubmit = async (data: SignupFormData) => {
     clearErrors();
-    const temp =  await dispatch(signupThunk(data)).unwrap();
-    if(temp){
-      navigate("/")
+    const temp = await dispatch(signupThunk(data)).unwrap();
+    if (temp) {
+      navigate("/");
     }
   };
 

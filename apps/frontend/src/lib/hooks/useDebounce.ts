@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 
 export const useDebounce = (
   callback: (value: string) => void,
-  delay: number
+  delay: number,
 ) => {
   const timeoutRef = useRef<number | null>(null);
 
@@ -13,6 +13,6 @@ export const useDebounce = (
       }
       timeoutRef.current = window.setTimeout(() => callback(value), delay);
     },
-    [callback, delay]
+    [callback, delay],
   );
 };

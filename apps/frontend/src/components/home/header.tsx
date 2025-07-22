@@ -19,8 +19,8 @@ import { SearchDropdown } from "../ui/search-dropdowm";
 import { getSearchUserRequest } from "../../api/user.api";
 import type { searchResultUser } from "../../lib/redux/slices/auth/types";
 import { useDebounce } from "../../lib/hooks/useDebounce";
-import { sendRequest } from "../../lib/redux/slices/friend/FriendSlice";
-import { acceptFriendRequestThunk } from "../../lib/redux/slices/friend/thunks";
+import { sendRequest } from "../../lib/redux/slices/conversation/ConversationSlice";
+import { acceptFriendRequestThunk } from "../../lib/redux/slices/conversation/thunks";
 import { reducePendingReq } from "../../lib/redux/slices/auth/AuthSlice";
 
 export function Header() {
@@ -48,7 +48,7 @@ export function Header() {
     }
   };
   const handleFriendRequestClick = async (
-    event: React.MouseEvent<HTMLElement>
+    event: React.MouseEvent<HTMLElement>,
   ) => {
     setFriendRequestAnchor(event.currentTarget);
     setIsLoadingRequests(true);
@@ -80,7 +80,7 @@ export function Header() {
         debouncedSearch(value);
       }
     },
-    [debouncedSearch]
+    [debouncedSearch],
   );
 
   const handleChat = (userId: string) => {

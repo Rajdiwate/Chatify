@@ -1,9 +1,9 @@
-import { TextField, type TextFieldProps } from "@mui/material"
-import { forwardRef } from "react"
+import { TextField, type TextFieldProps } from "@mui/material";
+import { forwardRef } from "react";
 
 interface CustomInputProps extends Omit<TextFieldProps, "variant"> {
-  error?: boolean
-  helperText?: string
+  error?: boolean;
+  helperText?: string;
 }
 
 export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
@@ -32,8 +32,8 @@ export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
         }}
         {...props}
       />
-    )
+    );
   },
-)
+);
 
-CustomInput.displayName = "CustomInput"
+CustomInput.displayName = "CustomInput";

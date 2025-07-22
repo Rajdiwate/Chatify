@@ -4,18 +4,20 @@ import { logoutRequest } from "../../api/user.api";
 import { resetAuth } from "../redux/slices/auth/AuthSlice";
 import { useAppSelector } from "./redux";
 import { useAppHelpers } from "./useAppHelpers";
+import { resetConversation } from "../redux/slices/conversation/ConversationSlice";
 
 export const useAuth = () => {
   const { loading, error, user, pendingRequests } = useAppSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
   const { dispatch, navigate } = useAppHelpers();
-  const isMounted = useRef(user? true : false);
+  const isMounted = useRef(user ? true : false);
 
   const logout = async () => {
     await logoutRequest();
     navigate("/signin");
     dispatch(resetAuth());
+    dispatch(resetConversation());
   };
 
   useEffect(() => {

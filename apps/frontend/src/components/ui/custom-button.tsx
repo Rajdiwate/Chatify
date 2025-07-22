@@ -1,8 +1,8 @@
-import { Button, type ButtonProps, CircularProgress } from "@mui/material"
-import { forwardRef } from "react"
+import { Button, type ButtonProps, CircularProgress } from "@mui/material";
+import { forwardRef } from "react";
 
 interface CustomButtonProps extends ButtonProps {
-  loading?: boolean
+  loading?: boolean;
 }
 
 export const CustomButton = forwardRef<HTMLButtonElement, CustomButtonProps>(
@@ -33,8 +33,8 @@ export const CustomButton = forwardRef<HTMLButtonElement, CustomButtonProps>(
           children
         )}
       </Button>
-    )
+    );
   },
-)
+);
 
-CustomButton.displayName = "CustomButton"
+CustomButton.displayName = "CustomButton";

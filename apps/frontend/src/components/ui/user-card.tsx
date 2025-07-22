@@ -1,6 +1,6 @@
-import { Paper, Avatar, Typography, Box, Chip } from "@mui/material";
-import { Circle } from "lucide-react";
-import type { dbFriend } from "../../lib/redux/slices/friend/types";
+import { Paper, Avatar, Typography, Box} from "@mui/material";
+
+import type { dbFriend } from "../../lib/redux/slices/conversation/types";
 
 // interface UserCardProps {
 //   id: string
@@ -11,7 +11,7 @@ import type { dbFriend } from "../../lib/redux/slices/friend/types";
 //   isOnline?: boolean
 //   unreadCount?: number
 //   isSelected?: boolean
-//   onClick?: () => void   
+//   onClick?: () => void
 // }
 
 interface UserCardProps {

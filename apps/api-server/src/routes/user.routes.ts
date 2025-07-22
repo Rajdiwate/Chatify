@@ -7,7 +7,7 @@ import {
   signin,
   signup,
   getAllUsers,
-  logout
+  logout,
 } from "../controllers/user.controller";
 
 const router = Router();

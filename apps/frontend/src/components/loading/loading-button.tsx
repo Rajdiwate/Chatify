@@ -1,21 +1,32 @@
-import { Button, type ButtonProps, CircularProgress } from "@mui/material"
-import { forwardRef } from "react"
+import { Button, type ButtonProps, CircularProgress } from "@mui/material";
+import { forwardRef } from "react";
 
 interface LoadingButtonProps extends ButtonProps {
-  loading?: boolean
-  loadingText?: string
-  loadingPosition?: "start" | "end" | "center"
+  loading?: boolean;
+  loadingText?: string;
+  loadingPosition?: "start" | "end" | "center";
 }
 
 export const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(
-  ({ loading = false, loadingText, loadingPosition = "center", children, disabled, className, ...props }, ref) => {
-    const isDisabled = disabled || loading
+  (
+    {
+      loading = false,
+      loadingText,
+      loadingPosition = "center",
+      children,
+      disabled,
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const isDisabled = disabled || loading;
 
     const renderLoadingContent = () => {
-      if (!loading) return children
+      if (!loading) return children;
 
-      const spinner = <CircularProgress size={20} color="inherit" />
-      const text = loadingText || children
+      const spinner = <CircularProgress size={20} color="inherit" />;
+      const text = loadingText || children;
 
       if (loadingPosition === "start") {
         return (
@@ -23,7 +34,7 @@ export const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(
             {spinner}
             {text}
           </div>
-        )
+        );
       }
 
       if (loadingPosition === "end") {
@@ -32,7 +43,7 @@ export const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(
             {text}
             {spinner}
           </div>
-        )
+        );
       }
 
       return (
@@ -40,15 +51,20 @@ export const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(
           {spinner}
           {loadingText || "Loading..."}
         </div>
-      )
-    }
+      );
+    };
 
     return (
-      <Button ref={ref} disabled={isDisabled} className={`transition-all duration-200 ${className || ""}`} {...props}>
+      <Button
+        ref={ref}
+        disabled={isDisabled}
+        className={`transition-all duration-200 ${className || ""}`}
+        {...props}
+      >
         {renderLoadingContent()}
       </Button>
-    )
+    );
   },
-)
+);
 
-LoadingButton.displayName = "LoadingButton"
+LoadingButton.displayName = "LoadingButton";

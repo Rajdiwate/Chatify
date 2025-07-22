@@ -26,7 +26,7 @@ export const signin = asyncHandler(async (req, res, next) => {
   //compare hashed password and input password
   const isValidPassword = await comparePassword(
     user.passwordHash,
-    parsedData.data.password
+    parsedData.data.password,
   );
   if (!isValidPassword) {
     throw new AppError("Incorrect credentials", 400);
@@ -301,7 +301,7 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
   // Filter by search string if provided
   if (searchString) {
     const filteredUsers = allUsersWithrelationshipStatus.filter((user) =>
-      user.username.toLowerCase().includes(searchString.toLowerCase())
+      user.username.toLowerCase().includes(searchString.toLowerCase()),
     );
     return res.status(200).json({ success: true, users: filteredUsers });
   }
@@ -311,7 +311,7 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     .json({ success: true, users: allUsersWithrelationshipStatus });
 });
 
-export const logout = asyncHandler(async ( req, res) => {
+export const logout = asyncHandler(async (req, res) => {
   return res
     .clearCookie("authToken")
     .json({ success: true, message: "User Logged Out" });

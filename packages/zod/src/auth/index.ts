@@ -12,4 +12,3 @@ export const signUpSchema = z.object({
   displayname: z.string().optional(),
   phoneNumber: z.string().optional(),
 });
-

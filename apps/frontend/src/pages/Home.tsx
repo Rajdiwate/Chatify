@@ -6,28 +6,30 @@ import { ChatBox } from "../components/home/chat-box";
 import { useAuth } from "../lib/hooks/useAuth";
 import { LoadingSpinner } from "../components/loading/loading-spinner";
 import { useAppHelpers } from "../lib/hooks/useAppHelpers";
+import type { conversationType } from "../lib/redux/slices/conversation/types";
 
 export default function HomePage() {
-  const {user , loading}  = useAuth()
-  const  {navigate} = useAppHelpers()
+  const { user, loading } = useAuth();
+  const { navigate } = useAppHelpers();
   const [selectedChat, setSelectedChat] = useState<{
-    type: "friend" | "group";
+    type: conversationType;
     id: string;
     name: string;
   } | null>(null);
 
   const handleSelectChat = (
-    type: "friend" | "group",
+    type: conversationType,
     id: string,
-    name: string
+    name: string,
   ) => {
+    console.log("Selected chat:", type, id, name);
     setSelectedChat({ type, id, name });
   };
 
   const getLastSeen = () => {
     if (!selectedChat) return undefined;
 
-    if (selectedChat.type === "friend") {
+    if (selectedChat.type === "DIRECT") {
       return "Last seen 5 minutes ago";
     } else {
       return "8 members online";
@@ -35,15 +37,13 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    if(!user && !loading) {
+    if (!user && !loading) {
       navigate("/signin");
     }
-
   }, [loading, navigate, user]);
 
-
   if (loading) {
-    return <LoadingSpinner size={60}/>;
+    return <LoadingSpinner size={60} />;
   }
 
   return (

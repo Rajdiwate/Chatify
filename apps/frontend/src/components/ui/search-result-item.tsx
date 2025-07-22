@@ -1,20 +1,25 @@
-import { Box, Avatar, Typography, IconButton, Tooltip, Chip } from "@mui/material"
-import { MessageCircle, UserPlus, Check, Clock, Circle } from "lucide-react"
-import type { UserRelationshipStatus } from "../../lib/redux/slices/auth/types"
-
-
+import {
+  Box,
+  Avatar,
+  Typography,
+  IconButton,
+  Tooltip,
+  Chip,
+} from "@mui/material";
+import { MessageCircle, UserPlus, Check, Clock, Circle } from "lucide-react";
+import type { UserRelationshipStatus } from "../../lib/redux/slices/auth/types";
 
 interface SearchResultItemProps {
-  id: string
-  username: string
-  avatar?: string
-  isOnline?: boolean
-  mutualFriends?: number
-  relationshipStatus: UserRelationshipStatus
-  onChat?: (userId: string) => void
-  onAddFriend?: (userId: string) => void
-  onAcceptRequest?: (userId: string) => void
-  isProcessing?: boolean
+  id: string;
+  username: string;
+  avatar?: string;
+  isOnline?: boolean;
+  mutualFriends?: number;
+  relationshipStatus: UserRelationshipStatus;
+  onChat?: (userId: string) => void;
+  onAddFriend?: (userId: string) => void;
+  onAcceptRequest?: (userId: string) => void;
+  isProcessing?: boolean;
 }
 
 export function SearchResultItem({
@@ -43,7 +48,7 @@ export function SearchResultItem({
               <MessageCircle className="w-5 h-5" />
             </IconButton>
           </Tooltip>
-        )
+        );
 
       case "not_friend":
         return (
@@ -57,7 +62,7 @@ export function SearchResultItem({
               <UserPlus className="w-5 h-5" />
             </IconButton>
           </Tooltip>
-        )
+        );
 
       case "request_sent":
         return (
@@ -69,7 +74,7 @@ export function SearchResultItem({
               </Typography>
             </Box>
           </Tooltip>
-        )
+        );
 
       case "request_received":
         return (
@@ -83,29 +88,45 @@ export function SearchResultItem({
               <Check className="w-5 h-5" />
             </IconButton>
           </Tooltip>
-        )
+        );
 
       case "self":
-        return <Chip label="You" size="small" className="bg-blue-100 text-blue-800 text-xs" />
+        return (
+          <Chip
+            label="You"
+            size="small"
+            className="bg-blue-100 text-blue-800 text-xs"
+          />
+        );
 
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <Box className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors">
       {/* Avatar */}
       <div className="relative flex-shrink-0">
-        <Avatar src={avatar} alt={username.charAt(0).toLocaleUpperCase()} className="w-10 h-10" sx={{ bgcolor: "#3b82f6" }}>
+        <Avatar
+          src={avatar}
+          alt={username.charAt(0).toLocaleUpperCase()}
+          className="w-10 h-10"
+          sx={{ bgcolor: "#3b82f6" }}
+        >
           {username.charAt(0).toUpperCase()}
         </Avatar>
-        {isOnline && <Circle className="absolute -bottom-1 -right-1 w-3 h-3 text-green-500 fill-current" />}
+        {isOnline && (
+          <Circle className="absolute -bottom-1 -right-1 w-3 h-3 text-green-500 fill-current" />
+        )}
       </div>
 
       {/* User Info */}
       <Box className="flex-1 min-w-0">
-        <Typography variant="subtitle2" className="font-semibold text-gray-900 truncate">
+        <Typography
+          variant="subtitle2"
+          className="font-semibold text-gray-900 truncate"
+        >
           {username}
         </Typography>
         <Box className="flex items-center gap-2">
@@ -114,21 +135,23 @@ export function SearchResultItem({
               @{username}
             </Typography>
           )}
-          {mutualFriends > 0 && relationshipStatus !== "friend" && relationshipStatus !== "self" && (
-            <>
-              <Typography variant="caption" className="text-gray-400">
-                •
-              </Typography>
-              <Typography variant="caption" className="text-gray-500">
-                {mutualFriends} mutual friend{mutualFriends !== 1 ? "s" : ""}
-              </Typography>
-            </>
-          )}
+          {mutualFriends > 0 &&
+            relationshipStatus !== "friend" &&
+            relationshipStatus !== "self" && (
+              <>
+                <Typography variant="caption" className="text-gray-400">
+                  •
+                </Typography>
+                <Typography variant="caption" className="text-gray-500">
+                  {mutualFriends} mutual friend{mutualFriends !== 1 ? "s" : ""}
+                </Typography>
+              </>
+            )}
         </Box>
       </Box>
 
       {/* Action Button */}
       <Box className="flex-shrink-0">{renderActionButton()}</Box>
     </Box>
-  )
+  );
 }

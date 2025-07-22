@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 type AsyncRequestHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<any>;
 
 // Async Request Handler Wrapper
@@ -13,4 +13,3 @@ export const asyncHandler = (fn: AsyncRequestHandler) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
-

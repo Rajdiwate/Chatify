@@ -1,32 +1,44 @@
-import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { Box, Typography, InputBase, IconButton, Divider, Avatar } from "@mui/material"
-import { Send, Circle } from "lucide-react"
-import { ChatMessage } from "../ui/chat-message"
+import type React from "react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  InputBase,
+  IconButton,
+  Divider,
+  Avatar,
+} from "@mui/material";
+import { Send, Circle } from "lucide-react";
+import { ChatMessage } from "../ui/chat-message";
+import type { conversationType } from "../../lib/redux/slices/conversation/types";
 
 interface ChatBoxProps {
-  chatName?: string
-  lastSeen?: string
-  chatType?: "friend" | "group"
+  chatName?: string;
+  lastSeen?: string;
+  chatType?: conversationType;
 }
 
 interface Message {
-  id: string
-  content: string
-  timestamp: string
-  isOwn: boolean
-  senderName?: string
+  id: string;
+  content: string;
+  timestamp: string;
+  isOwn: boolean;
+  senderName?: string;
 }
 
-export function ChatBox({ chatName = "Select a chat", lastSeen, chatType }: ChatBoxProps) {
-  const [message, setMessage] = useState("")
+export function ChatBox({
+  chatName = "Select a chat",
+  lastSeen,
+  chatType,
+}: ChatBoxProps) {
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       content: "Hey there! How are you doing?",
       timestamp: "10:30 AM",
       isOwn: false,
-      senderName: chatType === "group" ? "Alice" : undefined,
+      senderName: chatType === "GROUP" ? "Alice" : undefined,
     },
     {
       id: "2",
@@ -39,7 +51,7 @@ export function ChatBox({ chatName = "Select a chat", lastSeen, chatType }: Chat
       content: "Pretty good! Just working on some projects.",
       timestamp: "10:35 AM",
       isOwn: false,
-      senderName: chatType === "group" ? "Alice" : undefined,
+      senderName: chatType === "GROUP" ? "Alice" : undefined,
     },
     {
       id: "4",
@@ -47,44 +59,49 @@ export function ChatBox({ chatName = "Select a chat", lastSeen, chatType }: Chat
       timestamp: "10:36 AM",
       isOwn: true,
     },
-  ])
+  ]);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
       const newMessage: Message = {
         id: Date.now().toString(),
         content: message,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         isOwn: true,
-      }
-      setMessages([...messages, newMessage])
-      setMessage("")
+      };
+      setMessages([...messages, newMessage]);
+      setMessage("");
     }
-  }
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
+      e.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
 
   return (
     <Box className="h-full flex flex-col bg-white">
       {/* Chat Header */}
       <Box className="p-4 border-b border-gray-200 bg-gray-50">
         <Box className="flex items-center gap-3">
-          <Avatar className="w-10 h-10 bg-blue-500">{chatName.charAt(0).toUpperCase()}</Avatar>
+          <Avatar className="w-10 h-10 bg-blue-500">
+            {chatName.charAt(0).toUpperCase()}
+          </Avatar>
           <Box>
             <Typography variant="h6" className="text-gray-900 font-semibold">
               {chatName}
@@ -153,5 +170,5 @@ export function ChatBox({ chatName = "Select a chat", lastSeen, chatType }: Chat
         </>
       )}
     </Box>
-  )
+  );
 }

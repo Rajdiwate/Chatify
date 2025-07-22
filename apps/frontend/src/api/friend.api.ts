@@ -5,7 +5,7 @@ import type {
   TAcceptRequestResponse,
   TGetFriendsResponse,
   TSendRequestResponse,
-} from "../lib/redux/slices/friend/types";
+} from "../lib/redux/slices/conversation/types";
 
 export const getFriendsRequest = async () => {
   try {
@@ -25,11 +25,14 @@ export const sendFriendRequest = async ({
   receiverId: string;
 }) => {
   try {
-    console.log(receiverId)
-    const { data } : {data : TSendRequestResponse} = await axiosInstance.post("/api/request/send", {
-      receiverId,
-    });
-    return data
+    console.log(receiverId);
+    const { data }: { data: TSendRequestResponse } = await axiosInstance.post(
+      "/api/request/send",
+      {
+        receiverId,
+      },
+    );
+    return data;
   } catch (error) {
     const axiosError = error as AxiosError;
     const errorData = axiosError.response?.data as THttpError;
@@ -45,7 +48,7 @@ export const acceptFriendRequest = async ({
   try {
     const { data }: { data: TAcceptRequestResponse } = await axiosInstance.post(
       "/api/request/accept",
-      { senderId }
+      { senderId },
     );
     return data;
   } catch (error) {

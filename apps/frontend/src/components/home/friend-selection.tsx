@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Box, Typography, Tabs, Tab, Divider } from "@mui/material";
 import { UserCard } from "../ui/user-card";
 import { GroupCard } from "../ui/group-card";
-import { useFriend } from "../../lib/hooks/useFriend";
+import { useConversation } from "../../lib/hooks/useConversation";
 import { UserCardSkeleton } from "../loading/skeleton-loader";
+import type { conversationType } from "../../lib/redux/slices/conversation/types";
 
 interface Group {
   id: string;
@@ -17,7 +18,7 @@ interface Group {
 }
 
 interface FriendSelectionProps {
-  onSelectChat: (type: "friend" | "group", id: string, name: string) => void;
+  onSelectChat: (type: conversationType, id: string, name: string) => void;
   selectedChatId?: string;
 }
 
@@ -26,7 +27,7 @@ export function FriendSelection({
   selectedChatId,
 }: FriendSelectionProps) {
   const [selectedTab, setSelectedTab] = useState(0);
-  const { friends, loading } = useFriend();
+  const { directConversations, loading } = useConversation();
 
   const groups: Group[] = [
     {
@@ -109,21 +110,21 @@ export function FriendSelection({
               <UserCardSkeleton />
               <UserCardSkeleton />
             </>
-          ) : friends && friends.length ? (
+          ) : directConversations && directConversations.length ? (
             <Box>
               <Typography
                 variant="h6"
                 className="text-gray-800 mb-4 font-semibold"
               >
-                Friends ({friends.length})
+                Friends ({directConversations.length})
               </Typography>
-              {friends.map((friend) => (
+              {directConversations.map((conv) => (
                 <UserCard
-                  key={friend.id}
-                  friend={friend}
-                  isSelected={selectedChatId === friend.id}
+                  key={conv.id}
+                  friend={conv.friend}
+                  isSelected={selectedChatId === conv.friend.id}
                   onClick={() =>
-                    onSelectChat("friend", friend.id, friend.username)
+                    onSelectChat("DIRECT", conv.friend.id, conv.friend.username)
                   }
                 />
               ))}
@@ -144,7 +145,7 @@ export function FriendSelection({
                 key={group.id}
                 {...group}
                 isSelected={selectedChatId === group.id}
-                onClick={() => onSelectChat("group", group.id, group.name)}
+                onClick={() => onSelectChat("GROUP", group.id, group.name)}
               />
             ))}
           </Box>

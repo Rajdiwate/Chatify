@@ -1,5 +1,5 @@
-import z from "zod"
+import z from "zod";
 
 export const getConversationSchema = z.object({
-    type : z.enum(["DIRECT" , "GROUP"])
-})
+  type: z.enum(["DIRECT", "GROUP"]),
+});

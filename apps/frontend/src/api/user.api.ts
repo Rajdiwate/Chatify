@@ -13,7 +13,7 @@ export const signInRequest = async function (reqData: SigninFormData) {
   try {
     const { data }: { data: TauthResponse } = await axiosInstance.post(
       "/api/signin",
-      reqData
+      reqData,
     );
     return data;
   } catch (error) {
@@ -27,7 +27,7 @@ export const signUpRequest = async function (reqData: SignupFormData) {
   try {
     const { data }: { data: TauthResponse } = await axiosInstance.post(
       "/api/signup",
-      reqData
+      reqData,
     );
     return data;
   } catch (error) {
@@ -64,7 +64,7 @@ export const getPendingRequestsRequest = async function () {
 export const getSearchUserRequest = async function (searchString: string) {
   try {
     const { data }: { data: searchResultResponse } = await axiosInstance.get(
-      `/api/all-users?searchString=${searchString}`
+      `/api/all-users?searchString=${searchString}`,
     );
     return data;
   } catch (error) {
