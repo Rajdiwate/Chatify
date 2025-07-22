@@ -12,7 +12,7 @@ export type dbUser = {
   displayName: string | null;
   avatarUrl: string | null;
   phoneNumber: string | null;
-  pendingRequestsNumber : number
+  pendingRequestsNumber: number;
   lastSeen: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -48,7 +48,12 @@ export type THttpError = {
   success: false;
   message: string;
 };
-export type UserRelationshipStatus = "friend" | "not_friend" | "request_sent" | "request_received" | "self"
+export type UserRelationshipStatus =
+  | "friend"
+  | "not_friend"
+  | "request_sent"
+  | "request_received"
+  | "self";
 export type searchResultUser = {
   id: string;
   username: string;
@@ -56,7 +61,7 @@ export type searchResultUser = {
   relationshipStatus: UserRelationshipStatus;
 };
 
-export type searchResultResponse ={
-  success : true,
-  users : searchResultUser[]
-}
+export type searchResultResponse = {
+  success: true;
+  users: searchResultUser[];
+};

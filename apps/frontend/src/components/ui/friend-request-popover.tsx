@@ -5,6 +5,9 @@ import { UserPlus, X } from "lucide-react"
 import { LoadingSpinner } from "../loading/loading-spinner"
 import { FriendRequestCard } from "./friend-request-card"
 import type { TFriendRequest } from "../../lib/redux/slices/auth/types"
+import { useAppHelpers } from "../../lib/hooks/useAppHelpers"
+import { acceptFriendRequestThunk } from "../../lib/redux/slices/friend/thunks"
+import { onRequestAccept} from "../../lib/redux/slices/auth/AuthSlice"
 
 
 interface FriendRequestPopoverProps {
@@ -23,13 +26,22 @@ export function FriendRequestPopover({
   isLoading = false,
 }: FriendRequestPopoverProps) {
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set())
+  const {dispatch} = useAppHelpers()
   const [notification, setNotification] = useState<{
     type: "success" | "error"
     message: string
   } | null>(null)
 
   const handleAccept = async (id: string) => {
+    console.log(id)
     setProcessingIds((prev) => new Set(prev).add(id))
+    const data = await dispatch(acceptFriendRequestThunk({ senderId: id })).unwrap();
+    if(data){
+      setNotification({type : "success" , message : "Request accepted successfully"})
+      //update the pending requests state and number of pending requests state
+      dispatch(onRequestAccept(id))
+    }
+    else setNotification({type : "error" , message : "Something went wrong. Please try again later"})
   }
 
   const handleDecline = async (id: string) => {

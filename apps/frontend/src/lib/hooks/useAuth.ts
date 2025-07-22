@@ -1,25 +1,35 @@
-import { useCallback, useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { getCurrentUserThunk } from "../redux/slices/auth/thunks";
+import { logoutRequest } from "../../api/user.api";
+import { resetAuth } from "../redux/slices/auth/AuthSlice";
 import { useAppSelector } from "./redux";
 import { useAppHelpers } from "./useAppHelpers";
-import { getCurrentUserThunk } from "../redux/slices/auth/thunks";
 
 export const useAuth = () => {
-  const { loading, error, user ,pendingRequests} = useAppSelector((state) => state.auth);
-  const { dispatch } = useAppHelpers();
-  const fetchUserDetail = useCallback(async () => {
-    await dispatch(getCurrentUserThunk()).unwrap();
-  }, [dispatch]);
+  const { loading, error, user, pendingRequests } = useAppSelector(
+    (state) => state.auth
+  );
+  const { dispatch, navigate } = useAppHelpers();
+  const isMounted = useRef(user? true : false);
+
+  const logout = async () => {
+    await logoutRequest();
+    navigate("/signin");
+    dispatch(resetAuth());
+  };
 
   useEffect(() => {
-    if (!user) {
-      fetchUserDetail();
+    if (!isMounted.current && !user) {
+      isMounted.current = true;
+      dispatch(getCurrentUserThunk());
     }
-  }, [user, fetchUserDetail]);
+  }, [dispatch, user]);
 
   return {
     user,
     error,
     loading,
     pendingRequests,
+    logout,
   };
 };

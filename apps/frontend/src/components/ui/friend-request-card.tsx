@@ -1,5 +1,5 @@
 import { Paper, Avatar, Typography, Box, IconButton, Tooltip } from "@mui/material"
-import { Check, X, Circle } from "lucide-react"
+import { Check, Circle, X } from "lucide-react"
 
 interface FriendRequestCardProps {
   id: string

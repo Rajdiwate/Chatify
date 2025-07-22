@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentUserThunk, getPendingRequestsThunk, signinThunk, signupThunk } from "./thunks";
+import {
+  getCurrentUserThunk,
+  getPendingRequestsThunk,
+  signinThunk,
+  signupThunk,
+} from "./thunks";
 import type { IAuth } from "./types";
 
 const initialState: IAuth = {
@@ -10,7 +15,30 @@ const initialState: IAuth = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    reducePendingReq: (state) => {
+      if (state.user && state.user.pendingRequestsNumber > 0) {
+        state.user.pendingRequestsNumber -= 1;
+      }
+    },
+    onRequestAccept: (state, action) => {
+      const initialLength = state.pendingRequests?.length || 0;
+      state.pendingRequests =
+        state.pendingRequests?.filter((req) => req.id !== action.payload) || [];
+
+      // Keep counter in sync
+      const removedCount = initialLength - state.pendingRequests.length;
+      if (removedCount > 0 && state.user?.pendingRequestsNumber) {
+        state.user.pendingRequestsNumber = Math.max(
+          0,
+          state.user.pendingRequestsNumber - removedCount
+        );
+      }
+    },
+    resetAuth : ()=>{
+      return initialState
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signinThunk.pending, (state) => {
@@ -57,24 +85,23 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = "";
       });
-    
+
     builder
-      .addCase(getPendingRequestsThunk.pending, (state) => {  
+      .addCase(getPendingRequestsThunk.pending, (state) => {
         state.error = "";
       })
-      .addCase(getPendingRequestsThunk.fulfilled, (state, action) => {  
+      .addCase(getPendingRequestsThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
         if (state.user) {
-          state.pendingRequests =action.payload;
+          state.pendingRequests = action.payload;
         }
       })
       .addCase(getPendingRequestsThunk.rejected, (state, action) => {
         state.error = action.payload;
-      }
-    )
+      });
   },
 });
 
 export default authSlice.reducer;
-// export const {}  = authSlice.actions
+export const { reducePendingReq , onRequestAccept ,resetAuth} = authSlice.actions;

@@ -5,12 +5,11 @@
     setup Redis for cache
         store user details to get on "/me" route
 
-## BUGS -->
+## BUGS --> 
+    accepting request from anywhere should sync in the search results and pending requests
 
 ## Frontend -->
-    integrate accept request api on the the model of pending requests. comment out the decline request button for now
-    give an option on the friends and groups section to refresh and call the get friends request
-    logout button on heder
+    create a slice for storing current selected chat user , chats  , states to update the chat 
 
 ## API --> 
     logout api

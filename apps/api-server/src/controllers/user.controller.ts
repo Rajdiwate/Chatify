@@ -310,3 +310,9 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ success: true, users: allUsersWithrelationshipStatus });
 });
+
+export const logout = asyncHandler(async ( req, res) => {
+  return res
+    .clearCookie("authToken")
+    .json({ success: true, message: "User Logged Out" });
+});

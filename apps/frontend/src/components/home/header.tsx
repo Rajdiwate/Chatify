@@ -6,12 +6,12 @@ import {
   Avatar,
   Box,
 } from "@mui/material";
-import { Search } from "lucide-react";
+import { LogOut, Search } from "lucide-react";
 import {
   FriendRequestButton,
   FriendRequestPopover,
 } from "../ui/friend-request-popover";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useAppHelpers } from "../../lib/hooks/useAppHelpers";
 import { getPendingRequestsThunk } from "../../lib/redux/slices/auth/thunks";
@@ -21,6 +21,7 @@ import type { searchResultUser } from "../../lib/redux/slices/auth/types";
 import { useDebounce } from "../../lib/hooks/useDebounce";
 import { sendRequest } from "../../lib/redux/slices/friend/FriendSlice";
 import { acceptFriendRequestThunk } from "../../lib/redux/slices/friend/thunks";
+import { reducePendingReq } from "../../lib/redux/slices/auth/AuthSlice";
 
 export function Header() {
   const [friendRequestAnchor, setFriendRequestAnchor] =
@@ -29,7 +30,7 @@ export function Header() {
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [searchResult, setSearchResult] = useState<searchResultUser[]>([]);
   const { dispatch } = useAppHelpers();
-  const { pendingRequests, user } = useAuth();
+  const { pendingRequests, user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -95,7 +96,12 @@ export function Header() {
   const handleAcceptRequest = async (userId: string) => {
     console.log("Accepting friend request from:", userId);
     await dispatch(acceptFriendRequestThunk({ senderId: userId })).unwrap();
+    dispatch(reducePendingReq());
   };
+
+  useEffect(() => {
+    setSearchQuery("");
+  }, [user?.pendingRequestsNumber]);
 
   return (
     <>
@@ -157,16 +163,29 @@ export function Header() {
           <Box className="flex items-center gap-2">
             <Avatar className="w-8 h-8 bg-blue-500 cursor-pointer">
               <Typography variant="body2" className="text-white font-semibold">
-                ME
+                {user?.username.charAt(0).toUpperCase()}
               </Typography>
             </Avatar>
             <Typography
               variant="body2"
-              className="text-gray-700 font-medium hidden md:block"
+              fontSize={20}
+              className="text-white font-medium hidden md:block text-3xl"
             >
-              Profile
+              {user?.username}
             </Typography>
           </Box>
+
+          {/* <Avatar className="w-8 h-8  cursor-pointer ml-10 bg-red-600" > */}
+          <Typography
+            variant="button"
+            className="text-white font-semibold bg-red-600 flex items-center justify-center rounded-xl p-3 cursor-pointer"
+            marginLeft={"50px"}
+            height={"3rem"}
+            width={"3rem"}
+          >
+            <LogOut onClick={logout} />
+          </Typography>
+          {/* </Avatar> */}
         </Toolbar>
       </AppBar>
 

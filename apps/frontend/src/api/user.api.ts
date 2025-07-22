@@ -74,3 +74,6 @@ export const getSearchUserRequest = async function (searchString: string) {
   }
 };
 
+export const logoutRequest = async function name() {
+  await axiosInstance.delete("/api/logout");
+};
