@@ -13,11 +13,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@chatify/zod" : "workspace:*",
-    "@chatify/utils" : "workspace:*",
     "@chatify/db": "workspace:*",
     "@chatify/typescript-config": "workspace:*",
+    "@chatify/utils": "workspace:*",
+    "@chatify/zod": "workspace:*",
+    "cookie": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
+    "redis": "^5.6.1",
     "socket.io": "^4.8.1",
     "typescript": "^5.8.3"
   }

@@ -22,6 +22,9 @@ export const ConversationSlice = createSlice({
     resetConversation: () => {
       return initialState;
     },
+    setCurrentConversation : (state , action)=>{
+      state.currentConversation = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -57,5 +60,5 @@ export const ConversationSlice = createSlice({
 });
 
 export default ConversationSlice.reducer;
-export const { sendRequest, pushtoDirectConversation, resetConversation } =
+export const { sendRequest, pushtoDirectConversation, resetConversation,setCurrentConversation } =
   ConversationSlice.actions;

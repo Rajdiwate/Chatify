@@ -27,6 +27,7 @@ export type TConversationState = {
   fetched: boolean;
   groupConversations: TGroupConversation[];
   directConversations: TDirectConversation[];
+  currentConversation?: TDirectConversation;
 };
 
 export type TGetConversationResponse = {

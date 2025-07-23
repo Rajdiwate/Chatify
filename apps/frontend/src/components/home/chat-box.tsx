@@ -11,6 +11,7 @@ import {
 import { Send, Circle } from "lucide-react";
 import { ChatMessage } from "../ui/chat-message";
 import type { conversationType } from "../../lib/redux/slices/conversation/types";
+import useChat from "../../lib/hooks/useChat";
 
 interface ChatBoxProps {
   chatName?: string;
@@ -18,48 +19,15 @@ interface ChatBoxProps {
   chatType?: conversationType;
 }
 
-interface Message {
-  id: string;
-  content: string;
-  timestamp: string;
-  isOwn: boolean;
-  senderName?: string;
-}
+
 
 export function ChatBox({
   chatName = "Select a chat",
   lastSeen,
-  chatType,
 }: ChatBoxProps) {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content: "Hey there! How are you doing?",
-      timestamp: "10:30 AM",
-      isOwn: false,
-      senderName: chatType === "GROUP" ? "Alice" : undefined,
-    },
-    {
-      id: "2",
-      content: "I'm doing great! Thanks for asking. How about you?",
-      timestamp: "10:32 AM",
-      isOwn: true,
-    },
-    {
-      id: "3",
-      content: "Pretty good! Just working on some projects.",
-      timestamp: "10:35 AM",
-      isOwn: false,
-      senderName: chatType === "GROUP" ? "Alice" : undefined,
-    },
-    {
-      id: "4",
-      content: "That sounds interesting! What kind of projects?",
-      timestamp: "10:36 AM",
-      isOwn: true,
-    },
-  ]);
+
+  const {messages} = useChat()
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -73,16 +41,6 @@ export function ChatBox({
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        content: message,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        isOwn: true,
-      };
-      setMessages([...messages, newMessage]);
       setMessage("");
     }
   };
@@ -130,7 +88,7 @@ export function ChatBox({
           </Box>
         ) : (
           <>
-            {messages.map((msg) => (
+            {messages?.map((msg) => (
               <ChatMessage key={msg.id} {...msg} />
             ))}
             <div ref={messagesEndRef} />

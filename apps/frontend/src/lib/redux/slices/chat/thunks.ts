@@ -1,14 +1,19 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
+import type { TgetMessagesResponse } from "./types";
+import { getMessagesRequest } from "../../../../api/conversation";
 
-type getChatInput = {
+type getMessagesInput = {
   conversationId: string;
 };
 
-export const getChatThunk = createAsyncThunk<
-  string,
-  getChatInput,
+export const getMessagesThunk = createAsyncThunk<
+  Pick<TgetMessagesResponse , "messages" | "members">,
+  getMessagesInput,
   { rejectValue: string; state: RootState }
->("/getChat", ({ conversationId }, { rejectWithValue }) => {
-  return rejectWithValue("not implemented" + conversationId);
+>("/getChat", async ({ conversationId }, { rejectWithValue }) => {
+  const data = await getMessagesRequest(conversationId);
+  if (data.success) {
+    return { members: data.members, messages: data.messages };
+  } else return rejectWithValue("not implemented" + conversationId);
 });

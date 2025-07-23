@@ -5,7 +5,7 @@ import { UserCard } from "../ui/user-card";
 import { GroupCard } from "../ui/group-card";
 import { useConversation } from "../../lib/hooks/useConversation";
 import { UserCardSkeleton } from "../loading/skeleton-loader";
-import type { conversationType } from "../../lib/redux/slices/conversation/types";
+import type { dbFriend } from "../../lib/redux/slices/conversation/types";
 
 interface Group {
   id: string;
@@ -18,7 +18,7 @@ interface Group {
 }
 
 interface FriendSelectionProps {
-  onSelectChat: (type: conversationType, id: string, name: string) => void;
+  onSelectChat: (id: string, friend: dbFriend) => void;
   selectedChatId?: string;
 }
 
@@ -27,7 +27,7 @@ export function FriendSelection({
   selectedChatId,
 }: FriendSelectionProps) {
   const [selectedTab, setSelectedTab] = useState(0);
-  const { directConversations, loading } = useConversation();
+  const { directConversations, loading , currentConversation } = useConversation();
 
   const groups: Group[] = [
     {
@@ -122,10 +122,8 @@ export function FriendSelection({
                 <UserCard
                   key={conv.id}
                   friend={conv.friend}
-                  isSelected={selectedChatId === conv.friend.id}
-                  onClick={() =>
-                    onSelectChat("DIRECT", conv.friend.id, conv.friend.username)
-                  }
+                  isSelected={currentConversation?.id === conv.id}
+                  onClick={() => onSelectChat(conv.id, conv.friend)}
                 />
               ))}
             </Box>
@@ -145,7 +143,7 @@ export function FriendSelection({
                 key={group.id}
                 {...group}
                 isSelected={selectedChatId === group.id}
-                onClick={() => onSelectChat("GROUP", group.id, group.name)}
+                // onClick={() => onSelectChat("GROUP", group.id, group.name)}
               />
             ))}
           </Box>

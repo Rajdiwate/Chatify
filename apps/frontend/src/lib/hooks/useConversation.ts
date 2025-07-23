@@ -5,7 +5,7 @@ import { getConversationThunk } from "../redux/slices/conversation/thunks";
 import type { conversationType } from "../redux/slices/conversation/types";
 
 export const useConversation = () => {
-  const { loading, error, directConversations, groupConversations, fetched } =
+  const { loading, error, directConversations, groupConversations, fetched  , currentConversation} =
     useAppSelector((state) => state.conversation);
   const { dispatch } = useAppHelpers();
   const { user } = useAppSelector((state) => state.auth);
@@ -26,6 +26,7 @@ export const useConversation = () => {
   return {
     loading,
     error,
+    currentConversation,
     directConversations,
     groupConversations,
     getConversations,

@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/listeners/conversation.listeners.ts","./src/listeners/message.listner.ts"],"version":"5.8.3"}

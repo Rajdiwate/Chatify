@@ -18,11 +18,13 @@ declare global {
 import userRoutes from "./routes/user.routes";
 import requestRoute from "./routes/request.route";
 import convoRoutes from "./routes/conversation.route";
+import messageRoutes from "./routes/message.route";
 import { errorMiddleware } from "./middleware/error.middleware";
 
 app.use("/api", userRoutes);
 app.use("/api/request", requestRoute);
 app.use("/api", convoRoutes);
+app.use("/api", messageRoutes);
 
 app.use(errorMiddleware);
 
