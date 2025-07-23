@@ -1,5 +1,29 @@
 # TODO --->
 
+    frontend will initiate the socket connection on the home page if user is logged in.
+    WS should figure out the user and map the userId->socketID
+
+    once connection is made successfully , frontend will send the
+    conversations Ids.
+    Ws should join the user in those rooms(convo ids)
+
+    on send:message listner on server , wss should store the messages
+    in redis , produce it to message broker and at last emit the
+    recieve:message on the room(convo ID)
+
+    frontend should get messages from http server ,
+    listen to recieve:message event and update the
+    chat state by mergeing the chats of ws and http.
+
+    the http server should lookup in the redis for the recent chats
+    based on cases: 
+    1. db wont have all the chats stored all the time due to batch updates.
+        - get the recent chats from redis , get the older chats from db , merge them and send
+
+## TypeScript -->
+
+    disabled strict mode and enabled noImplicitAny for pipeline success --> need to fix
+
 ## Redis -->
 
     setup Redis for cache
@@ -9,17 +33,7 @@
 
 ## Frontend -->
 
-    create socket io connection on the home page if user is logged in.
-    when user clicks on any conversation , start listening to the incomming:message event and fetch the chats by dispatching getChatThunk
-    merge the response of api with the messages present in the store
-    e.g ==>
-        when listening to incomming:message event , lets say chat with id 5,6,7 came in, and the api response gate the chats with id 1,2,3,4,5
-        then merge them to 1,2,3,4,5,6,7 and display them. after that just listen to the incomming:message event and update the state
-
 ## API -->
-
-    create
-
     POST /create-group
     POST /join-group
     POST /send-message
@@ -28,4 +42,5 @@
 ## WS -->
 
     create socket io server and authenticate user based on jwt token in the header
+    store the userId and the socketId in the redis
     create join room , send-message , recieve-message listeners

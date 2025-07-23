@@ -42,12 +42,12 @@ export const getAllConversation = asyncHandler(
 
     if (parsedData.data.type === "DIRECT") {
       const directConvos = convos.filter(
-        (convo: typeof convos[number]) => convo.type === "DIRECT"
+        (convo: (typeof convos)[number]) => convo.type === "DIRECT",
       );
 
-      const convoToSend = directConvos.map((convo: typeof convos[number]) => {
+      const convoToSend = directConvos.map((convo: (typeof convos)[number]) => {
         const friend = convo.members.filter(
-          (member: typeof convo.members[number]) => member.user.id !== userId
+          (member: (typeof convo.members)[number]) => member.user.id !== userId,
         )[0]?.user;
 
         return {
@@ -62,12 +62,12 @@ export const getAllConversation = asyncHandler(
       });
     } else {
       const groupConvos = convos.filter(
-        (convo: typeof convos[number]) => convo.members.length > 2
+        (convo: (typeof convos)[number]) => convo.members.length > 2,
       );
 
-      const convoToSend = groupConvos.map((convo: typeof convos[number]) => {
+      const convoToSend = groupConvos.map((convo: (typeof convos)[number]) => {
         const members = convo.members.filter(
-          (member: typeof convo.members[number]) => member.user.id !== userId
+          (member: (typeof convo.members)[number]) => member.user.id !== userId,
         );
 
         return {
@@ -82,5 +82,5 @@ export const getAllConversation = asyncHandler(
         conversations: convoToSend,
       });
     }
-  }
+  },
 );
