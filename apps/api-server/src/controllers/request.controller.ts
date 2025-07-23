@@ -5,8 +5,9 @@ import {
 import { asyncHandler } from "../utils/asyncHandler";
 import { AppError } from "../utils/AppError";
 import { prisma } from "@chatify/db";
+import { NextFunction, Request, Response } from "express";
 
-export const sendRequest = asyncHandler(async (req, res, next) => {
+export const sendRequest = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const parsedData = sendRequestSchema.safeParse(req.body);
   if (!parsedData.success) {
     throw new AppError("Incorrect Details", 400);
@@ -28,7 +29,7 @@ export const sendRequest = asyncHandler(async (req, res, next) => {
   return res.status(201).json({ success: true, friendRequest });
 });
 
-export const acceptRequest = asyncHandler(async (req, res, next) => {
+export const acceptRequest = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   // get the friend request id from the body
   const parsedData = acceptRequestSchema.safeParse(req.body);
   if (!parsedData.success) {

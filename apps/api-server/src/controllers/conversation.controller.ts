@@ -2,8 +2,9 @@ import { getConversationSchema } from "@chatify/zod/conversationSchema";
 import { asyncHandler } from "../utils/asyncHandler";
 import { AppError } from "../utils/AppError";
 import { prisma } from "@chatify/db";
+import { NextFunction, Request, Response } from "express";
 
-export const getAllConversation = asyncHandler(async (req, res, next) => {
+export const getAllConversation = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const parsedData = getConversationSchema.safeParse(req.body);
   const userId = req.userId as string;
   if (!parsedData.success) {

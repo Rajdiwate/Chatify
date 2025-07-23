@@ -6,7 +6,7 @@ import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { AppError } from "../utils/AppError";
 
-export const signin = asyncHandler(async (req, res, next) => {
+export const signin = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const parsedData = signInSchema.safeParse(req.body);
   console.log(req.body);
   if (!parsedData.success) {
@@ -53,7 +53,7 @@ export const signin = asyncHandler(async (req, res, next) => {
     });
 });
 
-export const signup = asyncHandler(async (req, res, next) => {
+export const signup = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const parsedData = signUpSchema.safeParse(req.body);
   if (!parsedData.success) {
     throw new AppError("Incorrect Details", 400);
@@ -104,7 +104,7 @@ export const signup = asyncHandler(async (req, res, next) => {
     .json({ success: true, user: { ...user, pendingRequestsNumber: 0 } });
 });
 
-export const getCurrentUser = asyncHandler(async (req, res, next) => {
+export const getCurrentUser = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const userId = req.userId as string;
   const user = await prisma.user.findUnique({
     where: {
@@ -126,7 +126,7 @@ export const getCurrentUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const getFriends = asyncHandler(async (req, res, next) => {
+export const getFriends = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const userId = req.userId as string;
 
   const friends = await prisma.user.findUnique({
@@ -173,7 +173,7 @@ export const getFriends = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ success: true, friends: friendsList });
 });
 
-export const getPendingRequests = asyncHandler(async (req, res, next) => {
+export const getPendingRequests = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const userId = req.userId as string;
 
   const user = await prisma.user.findUnique({
@@ -207,7 +207,7 @@ export const getPendingRequests = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ success: true, pendingRequests });
 });
 
-export const getAllUsers = asyncHandler(async (req, res, next) => {
+export const getAllUsers = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   const param = req.query;
   const searchString = param.searchString as string;
   const userId = req.userId as string;
@@ -311,7 +311,7 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
     .json({ success: true, users: allUsersWithrelationshipStatus });
 });
 
-export const logout = asyncHandler(async (req, res) => {
+export const logout = asyncHandler(async (req : Request, res : Response, next : NextFunction) => {
   return res
     .clearCookie("authToken")
     .json({ success: true, message: "User Logged Out" });
