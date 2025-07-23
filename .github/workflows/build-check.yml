@@ -13,21 +13,22 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v4
     - name: Install pnpm
       run: sudo npm install -g pnpm
-    - name: Use Node.js ${{ matrix.node-version }}
+      
+    - name: Use Node.js 24
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 24
         cache: 'pnpm'
-    - run: pnpm install --frozen-lockfile 
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile 
+    - name: Check types
+      run: pnpm run check-types
+
     - run: pnpm run format
-    - run : pnpm run build
+
+    - name: Build
+      run: pnpm run build
