@@ -28,7 +28,7 @@ export function ChatBox({
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const socket = useSocket();
-  const { messages ,id} = useChat();
+  const { messages, id } = useChat();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -41,16 +41,16 @@ export function ChatBox({
   }, [messages]);
 
   const handleSendMessage = () => {
-    console.log("sending message , out " , id , user , user?.username , user?.id )
+    console.log("sending message , out ", id, user, user?.username, user?.id);
     if (message.trim() && id && user && user.username && user.id) {
-      console.log("sendig message , in")
+      console.log("sendig message , in");
       socket?.emit("send:message", {
         content: message,
         senderId: user?.id,
         senderName: user?.username,
         conversationId: id,
       });
-      console.log("message sent")
+      console.log("message sent");
       setMessage("");
     }
   };

@@ -29,7 +29,7 @@ export const getMessages = asyncHandler(async (req, res, next) => {
         senderName: sender.username,
         conversationId: rest.conversationId,
       };
-    }
+    },
   );
 
   console.log("dbMessages", messagesToSend);
@@ -45,7 +45,7 @@ export const getMessages = asyncHandler(async (req, res, next) => {
   const messagesRaw = await client.lRange(
     `conversation:${parsedData.data.conversationId}`,
     0,
-    49
+    49,
   ); // 50 most recent (from index 0 to 9)
 
   console.log("messagesRaw", messagesRaw);
@@ -61,10 +61,10 @@ export const getMessages = asyncHandler(async (req, res, next) => {
   const mergedMessages = [...(messagesToSend ?? []), ...recentMessages];
   console.log("merged messages", mergedMessages);
   const uniqueMessages = Array.from(
-    new Map(mergedMessages.map((msg) => [msg.createdAt, msg])).values()
+    new Map(mergedMessages.map((msg) => [msg.createdAt, msg])).values(),
   ).sort((a, b) => {
-      return a.createdAt > b.createdAt ? -1 : 1;
-    });
+    return a.createdAt > b.createdAt ? -1 : 1;
+  });
 
   if (!convo) {
     throw new AppError("No such conversation", 404);

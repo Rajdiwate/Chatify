@@ -11,12 +11,12 @@ export const ChatSlice = createSlice({
   initialState,
   reducers: {
     setConversationId: (state, action) => {
-      console.log("setting COnsersation Id" , action.payload)
+      console.log("setting COnsersation Id", action.payload);
       state.id = action.payload;
     },
     addMessages: (state, action) => {
-      state.messages?.push(action.payload)
-    }
+      state.messages?.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -38,4 +38,4 @@ export const ChatSlice = createSlice({
 });
 
 export default ChatSlice.reducer;
-export const {addMessages , setConversationId}  = ChatSlice.actions
+export const { addMessages, setConversationId } = ChatSlice.actions;

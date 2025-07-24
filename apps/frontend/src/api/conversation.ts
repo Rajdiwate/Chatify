@@ -23,7 +23,7 @@ export const getMessagesRequest = async (conversationId: string) => {
   try {
     const { data }: { data: TgetMessagesResponse } = await axiosInstance.post(
       `/api/messages`,
-      { conversationId }
+      { conversationId },
     );
     return data;
   } catch (error) {

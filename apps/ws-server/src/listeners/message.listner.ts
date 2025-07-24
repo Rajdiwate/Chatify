@@ -4,7 +4,7 @@ import { createClient } from "redis";
 const messageListeners = (
   io: Server,
   socket: Socket,
-  client: ReturnType<typeof createClient>
+  client: ReturnType<typeof createClient>,
 ) => {
   socket.on(
     "send:message",
@@ -32,17 +32,14 @@ const messageListeners = (
         if (!conversationId || !content || !senderId || !senderName) {
           socket.emit(
             "err",
-            "conversationId , content , senderId , senderName are required to send message"
+            "conversationId , content , senderId , senderName are required to send message",
           );
         } else {
           // Check if the socket is part of the room
           if (!socket.rooms.has(conversationId)) {
             console.log(socket.rooms, conversationId);
             console.log("not joined the group yet. Cannot send message");
-            socket.emit(
-              "err",
-              "Not joined the group yet. Cannot send message"
-            );
+            socket.emit("err", "Not joined the group yet. Cannot send message");
           }
 
           // Push the message object to Redis list
@@ -54,7 +51,7 @@ const messageListeners = (
               senderName,
               createdAt: Date.now(),
               conversationId,
-            })
+            }),
           );
 
           // Set Redis expiry for the conversation
@@ -74,7 +71,7 @@ const messageListeners = (
         console.error("Error handling send:message:", err);
         socket.emit("err", "Internal server error");
       }
-    }
+    },
   );
 };
 

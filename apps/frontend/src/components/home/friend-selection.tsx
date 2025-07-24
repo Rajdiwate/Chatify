@@ -27,7 +27,8 @@ export function FriendSelection({
   selectedChatId,
 }: FriendSelectionProps) {
   const [selectedTab, setSelectedTab] = useState(0);
-  const { directConversations, loading , currentConversation } = useConversation();
+  const { directConversations, loading, currentConversation } =
+    useConversation();
 
   const groups: Group[] = [
     {
@@ -122,7 +123,7 @@ export function FriendSelection({
                 <UserCard
                   key={conv.id}
                   friend={conv.friend}
-                  lastMessage = {conv.messages? conv.messages[0]?.content : ""}
+                  lastMessage={conv.messages ? conv.messages[0]?.content : ""}
                   isSelected={currentConversation?.id === conv.id}
                   onClick={() => onSelectChat(conv.id, conv.friend)}
                 />

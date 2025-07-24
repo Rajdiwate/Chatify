@@ -16,7 +16,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
   const handleSendConversations = useCallback(() => {
     const rooms = directConversations.map((c) => c.id);
     if (rooms && rooms.length) {
-      socket?.emit("conversation", {rooms});
+      socket?.emit("conversation", { rooms });
     }
   }, [directConversations, socket]);
 
@@ -24,17 +24,17 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     (message: TChatMessage) => {
       console.log("message received", message);
       //push the message into the current open conversation(ChatSlice) if chat is open
-      console.log("checking if chat is open...")
+      console.log("checking if chat is open...");
       if (id && id === message.conversationId) {
-        console.log("chat is open, adding message")
+        console.log("chat is open, adding message");
         dispatch(addMessages(message));
       }
       // push the message in the  messages array of the conversations(direct/group)
       // ws should send the type of convo as well later
-      console.log("adding message in direct conversations")
+      console.log("adding message in direct conversations");
       dispatch(pushMessageInDirectConvorsation(message));
     },
-    [dispatch, id]
+    [dispatch, id],
   );
 
   useEffect(() => {

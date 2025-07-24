@@ -3,7 +3,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createClient } from "redis";
 
-export const client :ReturnType<typeof createClient> = createClient({ url: "redis://127.0.0.1:6379" });
+export const client: ReturnType<typeof createClient> = createClient({
+  url: "redis://127.0.0.1:6379",
+});
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -21,7 +23,6 @@ import requestRoute from "./routes/request.route";
 import convoRoutes from "./routes/conversation.route";
 import messageRoutes from "./routes/message.route";
 import { errorMiddleware } from "./middleware/error.middleware";
-
 
 app.use("/api", userRoutes);
 app.use("/api/request", requestRoute);

@@ -1,9 +1,8 @@
-
 import { useAppSelector } from "./redux";
 
 const useChat = () => {
-  const { loading, id, messages, members ,  } = useAppSelector(
-    (state) => state.chat
+  const { loading, id, messages, members } = useAppSelector(
+    (state) => state.chat,
   );
 
   return {

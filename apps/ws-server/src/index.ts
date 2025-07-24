@@ -7,12 +7,13 @@ import { createClient } from "redis";
 import messageListeners from "./listeners/message.listner";
 
 const httpServer = createServer();
- const client = createClient({url : "redis://127.0.0.1:6379"});
+const client = createClient({ url: "redis://127.0.0.1:6379" });
 
 const init = async () => {
   await client
     .on("error", (err) => console.log("Redis Client Error", err))
-    .connect().then(() => console.log("redis connected"));
+    .connect()
+    .then(() => console.log("redis connected"));
 };
 
 const io = new Server(httpServer, {
@@ -48,8 +49,8 @@ io.on("connection", (socket) => {
   }
 
   //listners
-  conversationListeners(io, socket , client);
-  messageListeners(io, socket , client);
+  conversationListeners(io, socket, client);
+  messageListeners(io, socket, client);
 
   socket.on("disconnect", () => {
     console.log("a user disconnected");

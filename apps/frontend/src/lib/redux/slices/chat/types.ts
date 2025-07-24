@@ -1,4 +1,3 @@
-
 export type TChatState = {
   loading: boolean;
   error?: string;
@@ -8,10 +7,10 @@ export type TChatState = {
 };
 
 export type TgetMessagesResponse = {
-  success : true , 
-  messages : TChatMessage[],
-  members : member[]
-}
+  success: true;
+  messages: TChatMessage[];
+  members: member[];
+};
 
 export type member = {
   id: string;
@@ -22,7 +21,7 @@ export type TChatMessage = {
   createdAt: Date;
   updatedAt: Date;
   senderId: string;
-  senderName : string,
+  senderName: string;
   conversationId: string;
   content: string;
 };

@@ -31,7 +31,6 @@ export const router = createBrowserRouter([
         <HomeLayout>
           <HomePage />
         </HomeLayout>
-        
       </SocketProvider>
     ),
   },

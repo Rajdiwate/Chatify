@@ -27,7 +27,7 @@ export const ConversationSlice = createSlice({
     },
     pushMessageInDirectConvorsation: (state, action) => {
       const conversation = state.directConversations.find(
-        (c) => c.id === action.payload.conversationId
+        (c) => c.id === action.payload.conversationId,
       );
       // ?.messages?.push(action.payload);
       conversation?.messages.push(action.payload);

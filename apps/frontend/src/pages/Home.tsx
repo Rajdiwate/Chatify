@@ -14,8 +14,8 @@ import { setConversationId } from "../lib/redux/slices/chat/ChatSlice";
 
 export default function HomePage() {
   const { user, loading } = useAuth();
-  const {currentConversation} = useConversation();
-  const {dispatch} = useAppHelpers();
+  const { currentConversation } = useConversation();
+  const { dispatch } = useAppHelpers();
   const { navigate } = useAppHelpers();
   // const [selectedChat, setSelectedChat] = useState<{
   //   type: conversationType;
@@ -23,12 +23,9 @@ export default function HomePage() {
   //   name: string;
   // } | null>(null);
 
-  const handleSelectChat = (
-    id: string,
-    friend : dbFriend
-  ) => {
+  const handleSelectChat = (id: string, friend: dbFriend) => {
     dispatch(setConversationId(id));
-    dispatch(setCurrentConversation({id ,friend}));
+    dispatch(setCurrentConversation({ id, friend }));
     dispatch(getMessagesThunk({ conversationId: id }));
   };
 
@@ -62,9 +59,7 @@ export default function HomePage() {
       <Box className="flex-1 flex overflow-hidden">
         {/* Left Section - Friend Selection */}
         <Box className="w-80 border-r border-gray-200 bg-white">
-          <FriendSelection
-            onSelectChat={handleSelectChat}
-          />
+          <FriendSelection onSelectChat={handleSelectChat} />
         </Box>
 
         {/* Right Section - Chat Box */}
