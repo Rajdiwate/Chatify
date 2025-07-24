@@ -19,7 +19,6 @@ export type member = {
   userId: string;
 };
 export type TChatMessage = {
-  id: string;
   createdAt: Date;
   updatedAt: Date;
   senderId: string;

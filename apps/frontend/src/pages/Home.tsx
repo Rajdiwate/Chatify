@@ -10,6 +10,7 @@ import type { dbFriend } from "../lib/redux/slices/conversation/types";
 import { setCurrentConversation } from "../lib/redux/slices/conversation/ConversationSlice";
 import { useConversation } from "../lib/hooks/useConversation";
 import { getMessagesThunk } from "../lib/redux/slices/chat/thunks";
+import { setConversationId } from "../lib/redux/slices/chat/ChatSlice";
 
 export default function HomePage() {
   const { user, loading } = useAuth();
@@ -26,7 +27,7 @@ export default function HomePage() {
     id: string,
     friend : dbFriend
   ) => {
-
+    dispatch(setConversationId(id));
     dispatch(setCurrentConversation({id ,friend}));
     dispatch(getMessagesThunk({ conversationId: id }));
   };

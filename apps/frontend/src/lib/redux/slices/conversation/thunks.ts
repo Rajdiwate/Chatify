@@ -11,6 +11,9 @@ export const getConversationThunk = createAsyncThunk<
 >("/getFriends", async (type, { rejectWithValue }) => {
   const data = await getConversationRequest(type);
   if (data.success) {
+    data.conversations.forEach((c) => {
+      c.messages = [];
+    });
     return data.conversations;
   } else return rejectWithValue(data.message);
 });

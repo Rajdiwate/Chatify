@@ -11,6 +11,7 @@ export const ChatSlice = createSlice({
   initialState,
   reducers: {
     setConversationId: (state, action) => {
+      console.log("setting COnsersation Id" , action.payload)
       state.id = action.payload;
     },
     addMessages: (state, action) => {

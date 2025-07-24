@@ -22,9 +22,16 @@ export const ConversationSlice = createSlice({
     resetConversation: () => {
       return initialState;
     },
-    setCurrentConversation : (state , action)=>{
-      state.currentConversation = action.payload
-    }
+    setCurrentConversation: (state, action) => {
+      state.currentConversation = action.payload;
+    },
+    pushMessageInDirectConvorsation: (state, action) => {
+      const conversation = state.directConversations.find(
+        (c) => c.id === action.payload.conversationId
+      );
+      // ?.messages?.push(action.payload);
+      conversation?.messages.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -60,5 +67,10 @@ export const ConversationSlice = createSlice({
 });
 
 export default ConversationSlice.reducer;
-export const { sendRequest, pushtoDirectConversation, resetConversation,setCurrentConversation } =
-  ConversationSlice.actions;
+export const {
+  sendRequest,
+  pushtoDirectConversation,
+  resetConversation,
+  setCurrentConversation,
+  pushMessageInDirectConvorsation,
+} = ConversationSlice.actions;

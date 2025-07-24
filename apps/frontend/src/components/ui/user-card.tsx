@@ -17,12 +17,14 @@ import type { dbFriend } from "../../lib/redux/slices/conversation/types";
 interface UserCardProps {
   friend: dbFriend;
   isSelected?: boolean;
+  lastMessage?: string;
   onClick?: () => void;
 }
 
 export function UserCard({
   friend,
   isSelected = false,
+  lastMessage,
   onClick,
 }: UserCardProps) {
   return (
@@ -62,14 +64,14 @@ export function UserCard({
               </Typography>
             )} */}
           </Box>
-          {/* {lastMessage && (
+          {lastMessage && (
             <Typography
               variant="body2"
               className="text-gray-600 text-sm truncate"
             >
               {lastMessage}
             </Typography>
-          )} */}
+          )}
         </Box>
 
         {/* {unreadCount > 0 && (

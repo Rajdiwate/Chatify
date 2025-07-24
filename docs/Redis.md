@@ -1,3 +1,3 @@
 ## storing recent messages based on conversationId (2 days expiry)
 
-    hSet('conversation:conversationId',{ senderId,  content, createdAt, conversationId}) 
+    lPush(`conversation:${conversationId}`, JSON.stringify({ content, senderId, senderName, createdAt: Date.now(), conversationId, }))

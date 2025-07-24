@@ -75,7 +75,7 @@ model ChatMember {
   userId            String     @map("user_id")
   role              MemberRole @default(MEMBER)
   joinedAt          DateTime   @default(now()) @map("joined_at")
-  lastReadMessageId String?    @map("last_read_message_id")
+  lastReadMessageId Int?    @map("last_read_message_id")
   leftAt            DateTime?  @map("left_at")
 
   // Relations
@@ -88,11 +88,11 @@ model ChatMember {
 }
 
 model Message {
-  id              String    @id @default(cuid())
+  id              Int    @id @default(autoincrement())
   conversationId  String    @map("conversation_id")
   senderId        String    @map("sender_id")
   content         String
-  replyToMessageId String?  @map("reply_to_message_id")
+  replyToMessageId Int?  @map("reply_to_message_id")
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   deletedAt       DateTime? @map("deleted_at")

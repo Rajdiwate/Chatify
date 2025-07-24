@@ -1,4 +1,5 @@
 import type { dbUser } from "../auth/types";
+import type { TChatMessage } from "../chat/types";
 
 export type dbFriend = {
   id: string;
@@ -11,6 +12,7 @@ export type conversationType = "DIRECT" | "GROUP";
 export type TDirectConversation = {
   id: string;
   friend: dbFriend;
+  messages: TChatMessage[];
 };
 
 export type TGroupConversation = {
@@ -19,6 +21,7 @@ export type TGroupConversation = {
   members: {
     user: Pick<dbUser, "id" | "username" | "email">;
   }[];
+  messages: TChatMessage[];
 };
 
 export type TConversationState = {

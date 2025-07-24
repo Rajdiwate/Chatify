@@ -12,6 +12,8 @@ import { Send, Circle } from "lucide-react";
 import { ChatMessage } from "../ui/chat-message";
 import type { conversationType } from "../../lib/redux/slices/conversation/types";
 import useChat from "../../lib/hooks/useChat";
+import { useSocket } from "../../lib/socket/useSocket";
+import { useAuth } from "../../lib/hooks/useAuth";
 
 interface ChatBoxProps {
   chatName?: string;
@@ -19,15 +21,14 @@ interface ChatBoxProps {
   chatType?: conversationType;
 }
 
-
-
 export function ChatBox({
   chatName = "Select a chat",
   lastSeen,
 }: ChatBoxProps) {
   const [message, setMessage] = useState("");
-
-  const {messages} = useChat()
+  const { user } = useAuth();
+  const socket = useSocket();
+  const { messages ,id} = useChat();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +41,16 @@ export function ChatBox({
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (message.trim()) {
+    console.log("sending message , out " , id , user , user?.username , user?.id )
+    if (message.trim() && id && user && user.username && user.id) {
+      console.log("sendig message , in")
+      socket?.emit("send:message", {
+        content: message,
+        senderId: user?.id,
+        senderName: user?.username,
+        conversationId: id,
+      });
+      console.log("message sent")
       setMessage("");
     }
   };
@@ -64,7 +74,7 @@ export function ChatBox({
             <Typography variant="h6" className="text-gray-900 font-semibold">
               {chatName}
             </Typography>
-            {lastSeen && (
+            {chatName !== "Select a chat" && lastSeen && (
               <Box className="flex items-center gap-1">
                 <Circle className="w-2 h-2 text-green-500 fill-current" />
                 <Typography variant="caption" className="text-gray-500">
@@ -88,8 +98,8 @@ export function ChatBox({
           </Box>
         ) : (
           <>
-            {messages?.map((msg) => (
-              <ChatMessage key={msg.id} {...msg} />
+            {messages?.map((msg, i) => (
+              <ChatMessage key={i} {...msg} />
             ))}
             <div ref={messagesEndRef} />
           </>

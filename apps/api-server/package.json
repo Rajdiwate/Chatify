@@ -8,15 +8,15 @@
     "build": "tsc -b",
     "start": "node dist/index.js",
     "dev": "pnpm run build && pnpm run start",
-    "check-types" : "tsc --noEmit"
+    "check-types": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@chatify/db": "workspace:*",
-    "@chatify/utils": "workspace:*",
     "@chatify/typescript-config": "workspace:*",
+    "@chatify/utils": "workspace:*",
     "@chatify/zod": "workspace:*",
     "@types/express": "^5.0.3",
     "cookie-parser": "^1.4.7",
@@ -24,6 +24,7 @@
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "redis": "^5.6.1",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
