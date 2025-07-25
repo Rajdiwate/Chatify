@@ -11,9 +11,9 @@ export const batchInsert = async (messages: IMessage[]) => {
           content: msg.content,
           conversationId: msg.conversationId,
           senderId: msg.senderId,
-          createdAt: msg.createdAt
-        }
-      })
+          createdAt: msg.createdAt,
+        },
+      }),
     );
     // Wait for all promises to resolve before the transaction finishes
     return Promise.all(createPromises);

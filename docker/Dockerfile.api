@@ -1,0 +1,22 @@
+FROM node:24-alpine
+
+WORKDIR /usr/src/app
+
+RUN npm install -g pnpm@latest 
+
+COPY ./package.json .
+COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
+COPY turbo.json .
+COPY ./packages ./packages
+COPY ./apps/api-server ./apps/api-server
+RUN pnpm install --frozen-lockfile
+RUN pnpm run db:generate
+
+ENV REDIS_URL="redis://redis:6379"
+ENV JWT_SECRET=fjonrojfnwrojvirnjvirjfreopif
+
+RUN pnpm run http:build
+EXPOSE 3000
+
+CMD ["pnpm", "run", "http:start"] 

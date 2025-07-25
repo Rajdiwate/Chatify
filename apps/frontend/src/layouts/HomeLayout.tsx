@@ -37,10 +37,9 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     [dispatch, id],
   );
 
-  useEffect(()=>{
+  useEffect(() => {
     handleSendConversations();
-  },[directConversations, handleSendConversations])
-
+  }, [directConversations, handleSendConversations]);
 
   useEffect(() => {
     socket?.on("authenticated", handleSendConversations);

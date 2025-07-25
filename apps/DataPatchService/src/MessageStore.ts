@@ -49,5 +49,3 @@ export class MessageStore implements IMessageStore {
     this._length = 0;
   }
 }
-
-

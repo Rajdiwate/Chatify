@@ -8,11 +8,18 @@ import { Kafka, Partitioners } from "kafkajs";
 import messageListeners from "./listeners/message.listner";
 
 const httpServer = createServer();
-export const client : ReturnType<typeof createClient> = createClient({ url: "redis://127.0.0.1:6379" });
+export const client: ReturnType<typeof createClient> = createClient({
+  url: process.env.REDIS_URL || "redis://127.0.0.1:6379",
+});
 export const producer = new Kafka({
   clientId: "chatify",
-  brokers: ["localhost:9092"],
-}).producer({allowAutoTopicCreation: true , idempotent: true , createPartitioner: Partitioners.LegacyPartitioner });
+  brokers: [process.env.KAFKA_URL || "localhost:9092"],
+}).producer({
+  allowAutoTopicCreation: true,
+  idempotent: true,
+  createPartitioner: Partitioners.LegacyPartitioner,
+});
+export const mainTopic = process.env.NMAIN_TOPIC || "persist";
 
 const init = async () => {
   await client

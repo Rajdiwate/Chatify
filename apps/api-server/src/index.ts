@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import { createClient } from "redis";
 
 export const client: ReturnType<typeof createClient> = createClient({
-  url: "redis://127.0.0.1:6379",
+  url: process.env.REDIS_URL || "redis://127.0.0.1:6379",
 });
 const app = express();
 app.use(express.json());

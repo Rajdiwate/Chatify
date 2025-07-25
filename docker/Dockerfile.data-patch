@@ -1,0 +1,28 @@
+FROM node:24-alpine
+
+WORKDIR /usr/src/app
+
+RUN npm install -g pnpm@latest 
+
+COPY ./package.json .
+COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
+COPY turbo.json .
+COPY ./packages ./packages
+COPY ./apps/DataPatchService ./apps/DataPatchService
+RUN pnpm install --frozen-lockfile
+RUN pnpm run db:generate
+
+ENV KAFKA_URL="kafka:9092"
+ENV TIME_THRESHOLD=2*24*60*60*1000
+ENV LENGTH_THRESHOLD=20
+ENV RETRY_TOPIC="retry"
+ENV MAIN_TOPIC="persist"
+ENV MAIN_CONSUMER_GROUP_ID="data-patch-service"
+ENV RETRY_CONSUMER_GROUP_ID="data-patch-service-retry"
+
+
+RUN pnpm run data-patch:build
+EXPOSE 3000
+
+CMD ["pnpm", "run", "data-patch:start"] 
