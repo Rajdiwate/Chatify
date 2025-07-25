@@ -49,7 +49,7 @@ const messageListeners = (
               content,
               senderId,
               senderName,
-              createdAt: Date.now(),
+              createdAt: new Date( Date.now()),
               conversationId,
             }),
           );
@@ -62,7 +62,7 @@ const messageListeners = (
             content,
             senderId,
             senderName,
-            createdAt: Date.now(),
+            createdAt: new Date( Date.now()),
             conversationId,
           });
         }

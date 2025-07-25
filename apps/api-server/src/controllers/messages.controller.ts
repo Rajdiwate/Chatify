@@ -54,7 +54,6 @@ export const getMessages = asyncHandler(async (req, res, next) => {
     const obj = JSON.parse(raw);
     return {
       ...obj,
-      createdAt: new Date(obj.createdAt), // convert if necessary
     };
   });
   console.log("recent messages", recentMessages);

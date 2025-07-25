@@ -29,8 +29,7 @@ export const ConversationSlice = createSlice({
       const conversation = state.directConversations.find(
         (c) => c.id === action.payload.conversationId,
       );
-      // ?.messages?.push(action.payload);
-      conversation?.messages.push(action.payload);
+      conversation?.messages.unshift(action.payload);
     },
   },
   extraReducers: (builder) => {

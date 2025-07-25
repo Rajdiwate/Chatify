@@ -36,7 +36,7 @@ export const getMessagesThunk = createAsyncThunk<
     return {
       members: data.members,
       messages: uniqueMessages.sort((a, b) => {
-        return a.createdAt > b.createdAt ? -1 : 1;
+        return a.createdAt < b.createdAt ? -1 : 1;
       }),
     };
   } else return rejectWithValue("not implemented" + conversationId);
