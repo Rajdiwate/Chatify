@@ -4,7 +4,7 @@ import { parse } from "cookie";
 import conversationListeners from "./listeners/conversation.listeners";
 import { verifyJwt } from "@chatify/utils/jwt";
 import { createClient } from "redis";
-import { Kafka } from "kafkajs";
+import { Kafka, Partitioners } from "kafkajs";
 import messageListeners from "./listeners/message.listner";
 
 const httpServer = createServer();
@@ -12,7 +12,7 @@ export const client : ReturnType<typeof createClient> = createClient({ url: "red
 export const producer = new Kafka({
   clientId: "chatify",
   brokers: ["localhost:9092"],
-}).producer({allowAutoTopicCreation: true , idempotent: true});
+}).producer({allowAutoTopicCreation: true , idempotent: true , createPartitioner: Partitioners.LegacyPartitioner });
 
 const init = async () => {
   await client

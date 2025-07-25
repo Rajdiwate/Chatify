@@ -1,1 +1,1 @@
-{"root":["./src/messagestore.ts","./src/index.ts"],"version":"5.8.3"}
+{"root":["./src/messagestore.ts","./src/index.ts","./src/utils/dbinsert.ts","./src/utils/insertutil.ts"],"version":"5.8.3"}
