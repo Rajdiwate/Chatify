@@ -8,8 +8,8 @@ const kafka = new Kafka({
   brokers: ["localhost:9092"],
 });
 
-export const timeThreshold = 1000 * 60; // 2 * 24 * 60 * 60 * 1000; // 2 days
-export const lengthThreshold = 2;
+export const timeThreshold =  2 * 24 * 60 * 60 * 1000; // 2 days
+export const lengthThreshold = 20;
 export const retryTopic = "retry";
 export const mainTopic = "persist";
 export const retryProducer = kafka.producer({ allowAutoTopicCreation: true , createPartitioner: Partitioners.LegacyPartitioner  });
