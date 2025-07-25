@@ -4,16 +4,25 @@ import { parse } from "cookie";
 import conversationListeners from "./listeners/conversation.listeners";
 import { verifyJwt } from "@chatify/utils/jwt";
 import { createClient } from "redis";
+import { Kafka } from "kafkajs";
 import messageListeners from "./listeners/message.listner";
 
 const httpServer = createServer();
-const client = createClient({ url: "redis://127.0.0.1:6379" });
+export const client : ReturnType<typeof createClient> = createClient({ url: "redis://127.0.0.1:6379" });
+export const producer = new Kafka({
+  clientId: "chatify",
+  brokers: ["localhost:9092"],
+}).producer({allowAutoTopicCreation: true , idempotent: true});
 
 const init = async () => {
   await client
     .on("error", (err) => console.log("Redis Client Error", err))
     .connect()
     .then(() => console.log("redis connected"));
+  await producer
+    .connect()
+    .then(() => console.log("kafka connected"))
+    .catch((err) => console.log("failed to connect to kafka producer", err));
 };
 
 const io = new Server(httpServer, {
@@ -37,8 +46,6 @@ io.on("connection", (socket) => {
         console.log("cookie not found");
         socket.disconnect();
       }
-      //verify token
-      // emit authenticated
     } else {
       console.log("cookie not found");
       socket.disconnect();

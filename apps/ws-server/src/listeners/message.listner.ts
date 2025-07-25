@@ -1,10 +1,11 @@
 import { Server, Socket } from "socket.io";
 import { createClient } from "redis";
+import { producer } from "..";
 
 const messageListeners = (
   io: Server,
   socket: Socket,
-  client: ReturnType<typeof createClient>,
+  client: ReturnType<typeof createClient>
 ) => {
   socket.on(
     "send:message",
@@ -32,7 +33,7 @@ const messageListeners = (
         if (!conversationId || !content || !senderId || !senderName) {
           socket.emit(
             "err",
-            "conversationId , content , senderId , senderName are required to send message",
+            "conversationId , content , senderId , senderName are required to send message"
           );
         } else {
           // Check if the socket is part of the room
@@ -49,20 +50,36 @@ const messageListeners = (
               content,
               senderId,
               senderName,
-              createdAt: new Date( Date.now()),
+              createdAt: new Date(Date.now()),
               conversationId,
-            }),
+            })
           );
 
           // Set Redis expiry for the conversation
           await client.expire(`conversation:${conversationId}`, 3600 * 24 * 2); // 2 days
-
+          // Send the message to Kafka
+          await producer.send({
+            topic: "persist",
+            messages : [
+              {
+                value: JSON.stringify({
+                  content,
+                  senderId,
+                  senderName,
+                  createdAt: new Date(Date.now()),
+                  conversationId,
+                }),
+                key: conversationId
+              },
+              
+            ]
+          });
           // Broadcast the message to the room
           io.to(conversationId).emit("receive:message", {
             content,
             senderId,
             senderName,
-            createdAt: new Date( Date.now()),
+            createdAt: new Date(Date.now()),
             conversationId,
           });
         }
@@ -71,7 +88,7 @@ const messageListeners = (
         console.error("Error handling send:message:", err);
         socket.emit("err", "Internal server error");
       }
-    },
+    }
   );
 };
 

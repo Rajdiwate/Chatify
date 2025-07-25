@@ -18,6 +18,18 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  apps/DataPatchService:
+    dependencies:
+      '@chatify/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@chatify/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      kafkajs:
+        specifier: ^2.2.4
+        version: 2.2.4
+
   apps/api-server:
     dependencies:
       '@chatify/db':
@@ -181,6 +193,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      kafkajs:
+        specifier: ^2.2.4
+        version: 2.2.4
       redis:
         specifier: ^5.6.1
         version: 5.6.1
@@ -2004,6 +2019,10 @@ packages:
 
   jws@3.2.2:
     resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
+
+  kafkajs@2.2.4:
+    resolution: {integrity: sha512-j/YeapB1vfPT2iOIUn/vxdyKEuhuY2PxMBvf5JWux6iSaukAccrMtXEY/Lb7OvavDhOWME589bpLrEdnVHjfjA==}
+    engines: {node: '>=14.0.0'}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -4815,6 +4834,8 @@ snapshots:
     dependencies:
       jwa: 1.4.2
       safe-buffer: 5.2.1
+
+  kafkajs@2.2.4: {}
 
   keyv@4.5.4:
     dependencies:

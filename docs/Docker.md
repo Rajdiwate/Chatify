@@ -2,4 +2,4 @@ Postgres -> docker run --name postgresdb -e POSTGRES_PASSWORD=mysecretpassword -
 
 Redis -> docker run -d --name redis -p 6379:6379 redis
 
-Kafka ->
+Kafka -> docker run -d --name kafka -p 9092:9092 apache/kafka:latest

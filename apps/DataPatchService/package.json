@@ -1,5 +1,5 @@
 {
-  "name": "ws-server",
+  "name": "data-patch-service",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,19 +9,12 @@
     "start": "node dist/index.js",
     "dev": "pnpm run build && pnpm run start"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@chatify/db": "workspace:*",
     "@chatify/typescript-config": "workspace:*",
-    "@chatify/utils": "workspace:*",
-    "@chatify/zod": "workspace:*",
-    "cookie": "^1.0.2",
-    "jsonwebtoken": "^9.0.2",
-    "kafkajs": "^2.2.4",
-    "redis": "^5.6.1",
-    "socket.io": "^4.8.1",
-    "typescript": "^5.8.3"
-  }
+    "kafkajs": "^2.2.4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
