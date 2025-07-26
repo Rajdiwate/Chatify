@@ -4,9 +4,29 @@
 
 # TODO --->
 
-    listen to 'err' on frontend and display the toast
-    make displaying friendrequest realtime
-    on friend request accept , the one who sent the request has to refresh
+    add group chat
+        create groups API.
+        getConversation api modify to get group convos
+        inviteToGroup api ==> {senderId , convoId , recieverId}
+
+        on the header , create an icon to display the pending group invites.(same as that of the  pending friends)
+        on accepting the invite , update the group convos
+        
+        on the tabs(friends/groups) , give option to create group
+        on clicking on "create group" , show him a form to fill and call the create groups api
+        - update the group convos accordingly
+
+        when user opens the group chat box , on the header give option to invite friends
+        on clicking on that , the user should see a popup which will have a list of names(friends) to whome he can send invite ==> call the send Invite api.
+
+
+
+    if user wants to add someone to the group , show him the list of DIRECT convo he has to select the friends he wants to add
+
+    if user wants to send group invites to another user --> create a group invite with sender and receiver id
+
+    with the help of this , multiple user in the group can invite different persons(friends). but the outside cannot search and join the group
+    
 
     structue well using env files n all
 
