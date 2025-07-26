@@ -7,7 +7,7 @@ import { useAppHelpers } from "./useAppHelpers";
 import { resetConversation } from "../redux/slices/conversation/ConversationSlice";
 
 export const useAuth = () => {
-  const { loading, error, user, pendingRequests } = useAppSelector(
+  const { loading, error, user, pendingRequests , pendingInvites } = useAppSelector(
     (state) => state.auth,
   );
   const { dispatch, navigate } = useAppHelpers();
@@ -32,6 +32,7 @@ export const useAuth = () => {
     error,
     loading,
     pendingRequests,
+    pendingInvites,
     logout,
   };
 };

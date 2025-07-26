@@ -6,7 +6,8 @@
   "exports" : {
     "./authSchema" : "./src/auth/index.ts",
     "./friendRequestSchema" : "./src/friendRequest/index.ts",
-    "./conversationSchema" : "./src/conversation/index.ts"
+    "./conversationSchema" : "./src/conversation/index.ts",
+    "./groupsSchema" : "./src/groups/index.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

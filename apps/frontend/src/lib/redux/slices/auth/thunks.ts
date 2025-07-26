@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import type {
   dbUser,
   TFriendRequest,
+  TPendingInvite,
   TSigninInput,
   TSignupInput,
 } from "./types";
@@ -12,6 +13,7 @@ import {
   signInRequest,
   signUpRequest,
 } from "../../../../api/user.api";
+import { getPendingInvitesRequest } from "../../../../api/group";
 
 export const signupThunk = createAsyncThunk<
   dbUser,
@@ -60,3 +62,14 @@ export const getPendingRequestsThunk = createAsyncThunk<
     return data.pendingRequests;
   } else return rejectWithValue(data.message);
 });
+
+export const getPendingInvitesThunk = createAsyncThunk<
+  TPendingInvite[],
+  void,
+  { rejectValue: string; state: RootState }
+>("/pendingInvites", async (_, { rejectWithValue }) => {
+  const data = await getPendingInvitesRequest();
+  if (data.success) {
+    return data.invites;
+  } else return rejectWithValue(data.message);
+})

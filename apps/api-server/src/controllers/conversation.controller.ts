@@ -62,7 +62,7 @@ export const getAllConversation = asyncHandler(
       });
     } else {
       const groupConvos = convos.filter(
-        (convo: (typeof convos)[number]) => convo.members.length > 2,
+        (convo: (typeof convos)[number]) => convo.type === "GROUP" ,
       );
 
       const convoToSend = groupConvos.map((convo: (typeof convos)[number]) => {

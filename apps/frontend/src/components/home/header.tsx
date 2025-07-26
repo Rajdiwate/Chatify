@@ -14,7 +14,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useAppHelpers } from "../../lib/hooks/useAppHelpers";
-import { getPendingRequestsThunk } from "../../lib/redux/slices/auth/thunks";
+import { getPendingInvitesThunk, getPendingRequestsThunk } from "../../lib/redux/slices/auth/thunks";
 import { SearchDropdown } from "../ui/search-dropdowm";
 import { getSearchUserRequest } from "../../api/user.api";
 import type { searchResultUser } from "../../lib/redux/slices/auth/types";
@@ -25,13 +25,13 @@ import { reducePendingReq } from "../../lib/redux/slices/auth/AuthSlice";
 import { useSocket } from "../../lib/socket/useSocket";
 
 export function Header() {
-  const [friendRequestAnchor, setFriendRequestAnchor] =
-    useState<HTMLElement | null>(null);
+  const [requestAnchor, setRequestAnchor] = useState<HTMLElement | null>(null);
+  const [currentTab, setCurrentTab] = useState<"DIRECT" | "GROUP">("DIRECT");
   const [isLoadingRequests, setIsLoadingRequests] = useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
   const [searchResult, setSearchResult] = useState<searchResultUser[]>([]);
   const { dispatch } = useAppHelpers();
-  const { pendingRequests, user, logout } = useAuth();
+  const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -51,13 +51,25 @@ export function Header() {
   const handleFriendRequestClick = async (
     event: React.MouseEvent<HTMLElement>
   ) => {
-    setFriendRequestAnchor(event.currentTarget);
+    setCurrentTab("DIRECT")
+    setRequestAnchor(event.currentTarget);
     setIsLoadingRequests(true);
     await dispatch(getPendingRequestsThunk()).unwrap();
     setIsLoadingRequests(false);
   };
+
+  const handleGroupRequestClick = async (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setCurrentTab("GROUP")
+    setRequestAnchor(event.currentTarget);
+    setIsLoadingRequests(true);
+    await dispatch(getPendingInvitesThunk()).unwrap();
+    setIsLoadingRequests(false);
+  };
+
   const handleFriendRequestClose = () => {
-    setFriendRequestAnchor(null);
+    setRequestAnchor(null);
   };
 
   const handleSearchFocus = () => {
@@ -96,7 +108,7 @@ export function Header() {
       to: userId,
       from: user?.id,
       senderName: user?.username,
-      type : "DIRECT"
+      type: "DIRECT",
     });
   };
 
@@ -104,7 +116,7 @@ export function Header() {
     console.log("Accepting friend request from:", userId);
     await dispatch(acceptFriendRequestThunk({ senderId: userId })).unwrap();
     dispatch(reducePendingReq());
-    console.log("emiting accept request" , user)
+    console.log("emiting accept request", user);
     socket?.emit("accept:request", {
       senderId: userId,
       type: "DIRECT",
@@ -165,8 +177,14 @@ export function Header() {
                 />
               </Box>
               <FriendRequestButton
+                type="DIRECT"
                 requestCount={user?.pendingRequestsNumber || 0}
                 onClick={handleFriendRequestClick}
+              />
+              <FriendRequestButton
+                type="GROUP"
+                requestCount={user?.pendingRequestsNumber || 0}
+                onClick={handleGroupRequestClick}
               />
             </Box>
           </div>
@@ -202,10 +220,10 @@ export function Header() {
       </AppBar>
 
       <FriendRequestPopover
-        anchorEl={friendRequestAnchor}
-        open={Boolean(friendRequestAnchor)}
+        type={currentTab}
+        anchorEl={requestAnchor}
+        open={Boolean(requestAnchor)}
         onClose={handleFriendRequestClose}
-        pendingRequests={pendingRequests}
         isLoading={isLoadingRequests}
       />
     </>

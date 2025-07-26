@@ -27,7 +27,7 @@ export const signin = asyncHandler(
     //compare hashed password and input password
     const isValidPassword = await comparePassword(
       user.passwordHash,
-      parsedData.data.password,
+      parsedData.data.password
     );
     if (!isValidPassword) {
       throw new AppError("Incorrect credentials", 400);
@@ -52,7 +52,7 @@ export const signin = asyncHandler(
         success: true,
         user: { ...userWithoutPendingReqs, pendingRequestsNumber },
       });
-  },
+  }
 );
 
 export const signup = asyncHandler(
@@ -105,7 +105,7 @@ export const signup = asyncHandler(
         secure: process.env.NODE_ENV === "production", // Only send over HTTPS (in production)
       })
       .json({ success: true, user: { ...user, pendingRequestsNumber: 0 } });
-  },
+  }
 );
 
 export const getCurrentUser = asyncHandler(
@@ -129,7 +129,7 @@ export const getCurrentUser = asyncHandler(
       success: true,
       user: { ...userWithoutRecievedRequests, pendingRequestsNumber },
     });
-  },
+  }
 );
 
 export const getFriends = asyncHandler(
@@ -178,7 +178,7 @@ export const getFriends = asyncHandler(
     ];
 
     return res.status(200).json({ success: true, friends: friendsList });
-  },
+  }
 );
 
 export const getPendingRequests = asyncHandler(
@@ -214,7 +214,7 @@ export const getPendingRequests = asyncHandler(
     }));
 
     return res.status(200).json({ success: true, pendingRequests });
-  },
+  }
 );
 
 export const getAllUsers = asyncHandler(
@@ -312,7 +312,7 @@ export const getAllUsers = asyncHandler(
     // Filter by search string if provided
     if (searchString) {
       const filteredUsers = allUsersWithrelationshipStatus.filter((user) =>
-        user.username.toLowerCase().includes(searchString.toLowerCase()),
+        user.username.toLowerCase().includes(searchString.toLowerCase())
       );
       return res.status(200).json({ success: true, users: filteredUsers });
     }
@@ -320,13 +320,38 @@ export const getAllUsers = asyncHandler(
     return res
       .status(200)
       .json({ success: true, users: allUsersWithrelationshipStatus });
-  },
+  }
 );
+
+export const getGroupInvites = asyncHandler(async (req, res, next) => {
+  const userId = req.userId as string;
+  const invites = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      receivedInvites: {
+        where: { status: "PENDING" },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if(!invites){
+    throw new AppError("No such user", 404);
+  }
+  return res.status(200).json({success:true, invites: invites.receivedInvites.map(invite=>invite.sender)});
+});
 
 export const logout = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     return res
       .clearCookie("authToken")
       .json({ success: true, message: "User Logged Out" });
-  },
+  }
 );

@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   getCurrentUserThunk,
+  getPendingInvitesThunk,
   getPendingRequestsThunk,
   signinThunk,
   signupThunk,
@@ -10,6 +11,7 @@ import type { IAuth } from "./types";
 const initialState: IAuth = {
   loading: false,
   pendingRequests: [],
+  pendingInvites: [],
 };
 
 const authSlice = createSlice({
@@ -39,7 +41,7 @@ const authSlice = createSlice({
       if (removedCount > 0 && state.user?.pendingRequestsNumber) {
         state.user.pendingRequestsNumber = Math.max(
           0,
-          state.user.pendingRequestsNumber - removedCount,
+          state.user.pendingRequestsNumber - removedCount
         );
       }
     },
@@ -108,9 +110,29 @@ const authSlice = createSlice({
       .addCase(getPendingRequestsThunk.rejected, (state, action) => {
         state.error = action.payload;
       });
+    
+    builder
+      .addCase(getPendingInvitesThunk.pending, (state) => {
+        state.error = "";
+      })
+      .addCase(getPendingInvitesThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        if (state.user) {
+          state.pendingInvites = action.payload;
+        }
+      })
+      .addCase(getPendingInvitesThunk.rejected, (state, action) => {
+        state.error = action.payload;
+      })
   },
 });
 
 export default authSlice.reducer;
-export const { reducePendingReq, onRequestAccept, resetAuth, increasePendingReq, addToPendingRequests } =
-  authSlice.actions;
+export const {
+  reducePendingReq,
+  onRequestAccept,
+  resetAuth,
+  increasePendingReq,
+  addToPendingRequests,
+} = authSlice.actions;

@@ -22,6 +22,7 @@ export interface IAuth {
   error?: string;
   user?: dbUser;
   pendingRequests: TFriendRequest[];
+  pendingInvites: TPendingInvite[];
 }
 
 export type TSigninInput = {
@@ -64,3 +65,16 @@ export type searchResultResponse = {
   success: true;
   users: searchResultUser[];
 };
+
+export type TPendingInvite = {
+  id: string;
+  conversation: {
+    name: string;
+    id: string;
+  };
+};
+
+export type TPendingInvitesResponse = {
+  success: true;
+  invites: TPendingInvite[];
+}

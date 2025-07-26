@@ -4,12 +4,6 @@
 
 # TODO --->
 
-    add group chat
-        create groups API.
-        getConversation api modify to get group convos
-        inviteToGroup api ==> {senderId , convoId , recieverId}
-
-        on the header , create an icon to display the pending group invites.(same as that of the  pending friends)
         on accepting the invite , update the group convos
         
         on the tabs(friends/groups) , give option to create group
