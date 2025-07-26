@@ -17,7 +17,8 @@ import { FriendRequestCard } from "./friend-request-card";
 import type { TFriendRequest } from "../../lib/redux/slices/auth/types";
 import { useAppHelpers } from "../../lib/hooks/useAppHelpers";
 import { acceptFriendRequestThunk } from "../../lib/redux/slices/conversation/thunks";
-import { onRequestAccept } from "../../lib/redux/slices/auth/AuthSlice";
+import { onRequestAccept, reducePendingReq } from "../../lib/redux/slices/auth/AuthSlice";
+import { useSocket } from "../../lib/socket/useSocket";
 
 interface FriendRequestPopoverProps {
   anchorEl: HTMLElement | null;
@@ -36,6 +37,7 @@ export function FriendRequestPopover({
 }: FriendRequestPopoverProps) {
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const { dispatch } = useAppHelpers();
+  const socket = useSocket()
   const [notification, setNotification] = useState<{
     type: "success" | "error";
     message: string;
@@ -45,7 +47,7 @@ export function FriendRequestPopover({
     console.log(id);
     setProcessingIds((prev) => new Set(prev).add(id));
     const data = await dispatch(
-      acceptFriendRequestThunk({ senderId: id }),
+      acceptFriendRequestThunk({ senderId: id })
     ).unwrap();
     if (data) {
       setNotification({
@@ -54,6 +56,11 @@ export function FriendRequestPopover({
       });
       //update the pending requests state and number of pending requests state
       dispatch(onRequestAccept(id));
+      dispatch(reducePendingReq());
+      socket?.emit("accept:request", {
+        senderId: id,
+        type: "DIRECT",
+      });
     } else
       setNotification({
         type: "error",

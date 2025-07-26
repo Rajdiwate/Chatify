@@ -21,6 +21,14 @@ const authSlice = createSlice({
         state.user.pendingRequestsNumber -= 1;
       }
     },
+    increasePendingReq: (state) => {
+      if (state.user) {
+        state.user.pendingRequestsNumber += 1;
+      }
+    },
+    addToPendingRequests: (state, action) => {
+      state.pendingRequests?.push(action.payload);
+    },
     onRequestAccept: (state, action) => {
       const initialLength = state.pendingRequests?.length || 0;
       state.pendingRequests =
@@ -104,5 +112,5 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { reducePendingReq, onRequestAccept, resetAuth } =
+export const { reducePendingReq, onRequestAccept, resetAuth, increasePendingReq, addToPendingRequests } =
   authSlice.actions;

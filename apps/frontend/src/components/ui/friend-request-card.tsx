@@ -11,7 +11,6 @@ import { Check, Circle, X } from "lucide-react";
 interface FriendRequestCardProps {
   id: string;
   username: string;
-  email: string;
   avatar?: string;
   mutualFriends?: number;
   timestamp?: string;

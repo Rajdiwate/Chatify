@@ -6,6 +6,10 @@ import { verifyJwt } from "@chatify/utils/jwt";
 import { createClient } from "redis";
 import { Kafka, Partitioners } from "kafkajs";
 import messageListeners from "./listeners/message.listner";
+import { config } from "dotenv";
+import requestListener from "./listeners/friendRequest.listener";
+
+config();
 
 const httpServer = createServer();
 export const client: ReturnType<typeof createClient> = createClient({
@@ -20,6 +24,7 @@ export const producer = new Kafka({
   createPartitioner: Partitioners.LegacyPartitioner,
 });
 export const mainTopic = process.env.NMAIN_TOPIC || "persist";
+export const threshold = Number(process.env.LENGTH_THRESHOLD) || 20;
 
 const init = async () => {
   await client
@@ -44,7 +49,15 @@ io.on("connection", (socket) => {
       if (token) {
         try {
           const decodedToken = verifyJwt(token);
-          socket.emit("authenticated", decodedToken);
+
+          if (decodedToken && decodedToken.userId) {
+            socket.emit("authenticated", decodedToken);
+            client.hSet("users", `user:${decodedToken.userId}`, socket.id);
+            // for better performance use a revermap of socker.id -> userID
+          } else {
+            console.log("token not valid");
+            socket.disconnect();
+          }
         } catch (error) {
           console.log(error instanceof Error ? error.message : "invalid token");
           socket.disconnect();
@@ -65,8 +78,17 @@ io.on("connection", (socket) => {
   //listners
   conversationListeners(io, socket, client);
   messageListeners(io, socket, client);
+  requestListener(io, socket, client);
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
+    // find the user based on the socket Id in redis , and remove it
+    const users = await client.hGetAll("users");
+    Object.entries(users).forEach(async element => {
+        if(element[1] === socket.id){
+          await client.hDel("users", element[0]);
+        }
+    });
+
     console.log("a user disconnected");
   });
 });

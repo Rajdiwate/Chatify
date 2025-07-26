@@ -2,6 +2,9 @@ import { Kafka, Partitioners } from "kafkajs";
 import { IMessage, MessageStore } from "./MessageStore";
 import timeInsertFn from "./utils/insertUtil";
 import { insertAndRetry } from "./utils/dbInsert";
+import { config } from "dotenv";
+config();
+
 const kafka = new Kafka({
   clientId: "chatify",
   brokers: [process.env.Kafka_URL || "localhost:9092"],

@@ -34,7 +34,7 @@ services:
     environment:
       JWT_SECRET: fjonrojfnwrojvirnjvirjfreopif
       REDIS_URL: "redis://redis:6379"
-      DATABASE_URL: "postgresql://postgres:mysecretpassword@postgres:5432/postgres"
+      DATABASE_URL: "postgresql://postgres:mysecretpassword@postgres:5432/chatify"
 
   ws-server:
     build:
@@ -72,4 +72,4 @@ services:
       RETRY_TOPIC: "retry"
       MAIN_CONSUMER_GROUP_ID: "data-patch-service"
       RETRY_CONSUMER_GROUP_ID: "data-patch-service-retry"
-      DATABASE_URL: "postgresql://postgres:mysecretpassword@postgres:5432/postgres"
+      DATABASE_URL: "postgresql://postgres:mysecretpassword@postgres:5432/chatify"

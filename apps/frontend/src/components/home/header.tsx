@@ -22,6 +22,7 @@ import { useDebounce } from "../../lib/hooks/useDebounce";
 import { sendRequest } from "../../lib/redux/slices/conversation/ConversationSlice";
 import { acceptFriendRequestThunk } from "../../lib/redux/slices/conversation/thunks";
 import { reducePendingReq } from "../../lib/redux/slices/auth/AuthSlice";
+import { useSocket } from "../../lib/socket/useSocket";
 
 export function Header() {
   const [friendRequestAnchor, setFriendRequestAnchor] =
@@ -34,7 +35,7 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  // const debouncedSetSearch = useDebounce(setSearchQuery, 3000);
+  const socket = useSocket();
 
   const getSearchResults = async (query: string) => {
     setIsLoadingSearch(true);
@@ -48,7 +49,7 @@ export function Header() {
     }
   };
   const handleFriendRequestClick = async (
-    event: React.MouseEvent<HTMLElement>,
+    event: React.MouseEvent<HTMLElement>
   ) => {
     setFriendRequestAnchor(event.currentTarget);
     setIsLoadingRequests(true);
@@ -80,7 +81,7 @@ export function Header() {
         debouncedSearch(value);
       }
     },
-    [debouncedSearch],
+    [debouncedSearch]
   );
 
   const handleChat = (userId: string) => {
@@ -91,12 +92,23 @@ export function Header() {
   const handleAddFriend = (userId: string) => {
     console.log("Adding friend:", userId);
     dispatch(sendRequest({ receiverId: userId }));
+    socket?.emit("send:request", {
+      to: userId,
+      from: user?.id,
+      senderName: user?.username,
+      type : "DIRECT"
+    });
   };
 
   const handleAcceptRequest = async (userId: string) => {
     console.log("Accepting friend request from:", userId);
     await dispatch(acceptFriendRequestThunk({ senderId: userId })).unwrap();
     dispatch(reducePendingReq());
+    console.log("emiting accept request" , user)
+    socket?.emit("accept:request", {
+      senderId: userId,
+      type: "DIRECT",
+    });
   };
 
   useEffect(() => {

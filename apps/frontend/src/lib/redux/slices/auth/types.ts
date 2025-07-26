@@ -1,6 +1,5 @@
 export type TFriendRequest = {
   id: string;
-  email: string;
   username: string;
 };
 
