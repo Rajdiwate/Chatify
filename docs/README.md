@@ -2,6 +2,8 @@
 
     if there is improper input in the ws data input , emit an error event to client. the frontend will listen and  display toast for the error message
 
+    create a different docker file for kafka zookeeper. this will be used to create the docker compose file insted of pulling the image of apache/kafka from hub
+
 # TODO --->
 
         on accepting the invite , update the group convos
