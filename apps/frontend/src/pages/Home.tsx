@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { Header } from "../components/home/header";
 import { FriendSelection } from "../components/home/friend-selection";
@@ -11,22 +11,36 @@ import { setCurrentConversation } from "../lib/redux/slices/conversation/Convers
 import { useConversation } from "../lib/hooks/useConversation";
 import { getMessagesThunk } from "../lib/redux/slices/chat/thunks";
 import { setConversationId } from "../lib/redux/slices/chat/ChatSlice";
+import type {  TGroup } from "../lib/rtk/groupApi";
+
+
 
 export default function HomePage() {
   const { user, loading } = useAuth();
   const { currentConversation } = useConversation();
+  const [currentGroup, setCurrentGroup] = useState<TGroup>();
   const { dispatch } = useAppHelpers();
   const { navigate } = useAppHelpers();
-  // const [selectedChat, setSelectedChat] = useState<{
-  //   type: conversationType;
-  //   id: string;
-  //   name: string;
-  // } | null>(null);
-
-  const handleSelectChat = (id: string, friend: dbFriend) => {
-    dispatch(setConversationId(id));
-    dispatch(setCurrentConversation({ id, friend }));
-    dispatch(getMessagesThunk({ conversationId: id }));
+  const handleSelectChat = ({
+    id,
+    type,
+    group ,
+    friend,
+  }: {
+    id: string;
+    type: "GROUP" | "DIRECT";
+    group?: TGroup
+    friend?: dbFriend;
+  }) => {
+    if (type === "DIRECT") {
+      dispatch(setConversationId(id));
+      dispatch(setCurrentConversation({ id, friend }));
+      dispatch(getMessagesThunk({ conversationId: id }));
+    }
+    else {
+      dispatch(setConversationId(id));
+      setCurrentGroup(group);
+    }
   };
 
   const getLastSeen = () => {
@@ -68,6 +82,7 @@ export default function HomePage() {
             chatName={currentConversation?.friend.username}
             lastSeen={getLastSeen()}
             chatType={"DIRECT"}
+            group={currentGroup}
           />
         </Box>
       </Box>
