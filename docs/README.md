@@ -6,14 +6,12 @@
 
 # TODO --->
 
-        on accepting the invite , update the group convos
-        
-        on the tabs(friends/groups) , give option to create group
-        on clicking on "create group" , show him a form to fill and call the create groups api
-        - update the group convos accordingly
+        fix recieve message listener to send the type of convo and on frontend update the state of the rtk to display group messages
+
 
         when user opens the group chat box , on the header give option to invite friends
         on clicking on that , the user should see a popup which will have a list of names(friends) to whome he can send invite ==> call the send Invite api.
+            on accepting the invite , update the group convos
 
 
 
@@ -22,16 +20,14 @@
     if user wants to send group invites to another user --> create a group invite with sender and receiver id
 
     with the help of this , multiple user in the group can invite different persons(friends). but the outside cannot search and join the group
-    
+
 
     structue well using env files n all
 
     Add group chat feature
 
-
-
 ## Issues
-    if redis and kafka are down , the server will crash. Insted they should run and throw erros to frontend that service is not available
 
+    if redis and kafka are down , the server will crash. Insted they should run and throw erros to frontend that service is not available
 
 We can have 2 different frontends for chatting and for video calling

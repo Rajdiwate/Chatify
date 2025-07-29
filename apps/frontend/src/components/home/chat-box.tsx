@@ -14,22 +14,26 @@ import type { conversationType } from "../../lib/redux/slices/conversation/types
 import useChat from "../../lib/hooks/useChat";
 import { useSocket } from "../../lib/socket/useSocket";
 import { useAuth } from "../../lib/hooks/useAuth";
+import { useLazyGetGroupMessagesQuery, type TGroup } from "../../lib/rtk/groupApi";
 
 interface ChatBoxProps {
   chatName?: string;
   lastSeen?: string;
-  chatType?: conversationType;
+  chatType: conversationType;
+  group?: TGroup;
 }
 
 export function ChatBox({
   chatName = "Select a chat",
   lastSeen,
+  chatType,
+  group,
 }: ChatBoxProps) {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const socket = useSocket();
   const { messages, id } = useChat();
-
+  const groupMessagesData = useLazyGetGroupMessagesQuery()[1];
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -42,13 +46,14 @@ export function ChatBox({
 
   const handleSendMessage = () => {
     console.log("sending message , out ", id, user, user?.username, user?.id);
+
     if (message.trim() && id && user && user.username && user.id) {
       console.log("sendig message , in");
       socket?.emit("send:message", {
         content: message,
         senderId: user?.id,
         senderName: user?.username,
-        conversationId: id,
+        conversationId: chatType === "GROUP" ? group?.id : id,
       });
       console.log("message sent");
       setMessage("");
@@ -96,12 +101,18 @@ export function ChatBox({
               Select a friend or group to start chatting
             </Typography>
           </Box>
-        ) : (
+        ) : chatType === "DIRECT" ? (
           <>
             {messages?.map((msg, i) => (
               <ChatMessage key={i} {...msg} />
             ))}
             <div ref={messagesEndRef} />
+          </>
+        ) : (
+          <>
+            {groupMessagesData.data?.messages?.map((msg, i) => (
+              <ChatMessage key={i} {...msg} />
+            ))}
           </>
         )}
       </Box>

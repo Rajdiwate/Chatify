@@ -7,24 +7,27 @@ import { useConversation } from "../../lib/hooks/useConversation";
 import { UserCardSkeleton } from "../loading/skeleton-loader";
 import type { dbFriend } from "../../lib/redux/slices/conversation/types";
 import CreateGroupModal from "../ui/create-group-modal";
-import { useGetGroupConversationsQuery } from "../../lib/rtk/groupApi";
+import { useGetGroupConversationsQuery, type TGroup } from "../../lib/rtk/groupApi";
 
 interface FriendSelectionProps {
   onSelectChat: (chatInfo: {
     id: string;
     type: "GROUP" | "DIRECT";
-    groupId?: string;
-    groupName?: string;
+    group?: TGroup;
     friend?: dbFriend;
   }) => void;
   selectedChatId?: string;
+  setSelectedTab: React.Dispatch<React.SetStateAction<number>>;
+  selectedTab: number;
 }
 export function FriendSelection({
   onSelectChat,
   selectedChatId,
+  setSelectedTab,
+  selectedTab
 }: FriendSelectionProps) {
-  const [selectedTab, setSelectedTab] = useState(0);
-  const groupData = useGetGroupConversationsQuery({});
+
+  const groupData = useGetGroupConversationsQuery();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   const { directConversations, loading, currentConversation } =
     useConversation();
@@ -131,8 +134,7 @@ export function FriendSelection({
                       onSelectChat({
                         id: group.id,
                         type: "GROUP",
-                        groupId: group.id,
-                        groupName: group.groupName,
+                        group : group
                       })
                     }
                   />

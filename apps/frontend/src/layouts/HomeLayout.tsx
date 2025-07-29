@@ -11,19 +11,25 @@ import {
   addToPendingRequests,
   increasePendingReq,
 } from "../lib/redux/slices/auth/AuthSlice";
+import { useGetGroupConversationsQuery } from "../lib/rtk/groupApi";
 
 const HomeLayout = ({ children }: { children: ReactNode }) => {
   const socket = useSocket();
   const { dispatch } = useAppHelpers();
   const { id } = useChat();
   const { directConversations, getConversations } = useConversation();
+  const groupData = useGetGroupConversationsQuery();
 
   const handleSendConversations = useCallback(() => {
-    const rooms = directConversations.map((c) => c.id);
+    const directIds = directConversations.map((c) => c.id);
+    const groupIds = groupData.data?.conversations?.map((c) => c.id) || [];
+
+    const rooms = [...directIds, ...groupIds];
+
     if (rooms && rooms.length) {
       socket?.emit("conversation", { rooms });
     }
-  }, [directConversations, socket]);
+  }, [directConversations, socket , groupData.data?.conversations]);
 
   const handleRecieveMessages = useCallback(
     (message: TChatMessage) => {
@@ -78,9 +84,8 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
           theme: "light",
           transition: Bounce,
         });
-      }
-      else {
-        console.log("type is not DIRECT" , type);
+      } else {
+        console.log("type is not DIRECT", type);
       }
     },
     [dispatch]

@@ -11,34 +11,36 @@ import { setCurrentConversation } from "../lib/redux/slices/conversation/Convers
 import { useConversation } from "../lib/hooks/useConversation";
 import { getMessagesThunk } from "../lib/redux/slices/chat/thunks";
 import { setConversationId } from "../lib/redux/slices/chat/ChatSlice";
-import type {  TGroup } from "../lib/rtk/groupApi";
-
-
+import { useLazyGetGroupMessagesQuery, type TGroup } from "../lib/rtk/groupApi";
 
 export default function HomePage() {
   const { user, loading } = useAuth();
   const { currentConversation } = useConversation();
+  const [getGroupMessages] = useLazyGetGroupMessagesQuery();
   const [currentGroup, setCurrentGroup] = useState<TGroup>();
   const { dispatch } = useAppHelpers();
   const { navigate } = useAppHelpers();
+  const [selectedTab, setSelectedTab] = useState(0);
   const handleSelectChat = ({
     id,
     type,
-    group ,
+    group,
     friend,
   }: {
     id: string;
     type: "GROUP" | "DIRECT";
-    group?: TGroup
+    group?: TGroup;
     friend?: dbFriend;
   }) => {
     if (type === "DIRECT") {
       dispatch(setConversationId(id));
+      setCurrentGroup(undefined);
       dispatch(setCurrentConversation({ id, friend }));
       dispatch(getMessagesThunk({ conversationId: id }));
-    }
-    else {
+    } else {
       dispatch(setConversationId(id));
+      getGroupMessages({conversationId : id});
+      console.log("current group", group);
       setCurrentGroup(group);
     }
   };
@@ -73,15 +75,15 @@ export default function HomePage() {
       <Box className="flex-1 flex overflow-hidden">
         {/* Left Section - Friend Selection */}
         <Box className="w-80 border-r border-gray-200 bg-white">
-          <FriendSelection onSelectChat={handleSelectChat} />
+          <FriendSelection onSelectChat={handleSelectChat} setSelectedTab={setSelectedTab} selectedTab={selectedTab}  />
         </Box>
 
         {/* Right Section - Chat Box */}
         <Box className="flex-1">
           <ChatBox
-            chatName={currentConversation?.friend.username}
+            chatName={selectedTab === 1 ? currentGroup?.groupName :  currentConversation?.friend.username  }
             lastSeen={getLastSeen()}
-            chatType={"DIRECT"}
+            chatType={ selectedTab === 0 ? "DIRECT" : "GROUP"}
             group={currentGroup}
           />
         </Box>
