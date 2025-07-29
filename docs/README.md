@@ -22,9 +22,7 @@
     with the help of this , multiple user in the group can invite different persons(friends). but the outside cannot search and join the group
 
 
-    structue well using env files n all
-
-    Add group chat feature
+    create ops files of k8s for deploying the project
 
 ## Issues
 
