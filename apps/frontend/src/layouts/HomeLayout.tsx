@@ -11,7 +11,7 @@ import {
   addToPendingRequests,
   increasePendingReq,
 } from "../lib/redux/slices/auth/AuthSlice";
-import { useGetGroupConversationsQuery } from "../lib/rtk/groupApi";
+import { groupApi, useGetGroupConversationsQuery } from "../lib/rtk/groupApi";
 
 const HomeLayout = ({ children }: { children: ReactNode }) => {
   const socket = useSocket();
@@ -29,20 +29,51 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     if (rooms && rooms.length) {
       socket?.emit("conversation", { rooms });
     }
-  }, [directConversations, socket , groupData.data?.conversations]);
+  }, [directConversations, socket, groupData.data?.conversations]);
 
   const handleRecieveMessages = useCallback(
     (message: TChatMessage) => {
       console.log("message received", message);
-      //push the message into the current open conversation(ChatSlice) if chat is open
-      if (id && id === message.conversationId) {
-        console.log("chat is open, adding message");
-        dispatch(addMessages(message));
+
+      if (!message.type) {
+        toast.error("No  messagge type recieved", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        return;
       }
-      // push the message in the  messages array of the conversations(direct/group)
-      // ws should send the type of convo as well later
-      console.log("adding message in direct conversations");
-      dispatch(pushMessageInDirectConvorsation(message));
+      if (message.type === "DIRECT") {
+        //push the message into the current open conversation(ChatSlice) if chat is open
+        if (id && id === message.conversationId) {
+          console.log("chat is open, adding message");
+          dispatch(addMessages(message));
+        }
+        // push the message in the  messages array of the conversations(direct/group)
+        // ws should send the type of convo as well later
+        console.log("adding message in direct conversations");
+        dispatch(pushMessageInDirectConvorsation(message));
+      } else {
+        console.log("addming message to group");
+        dispatch(
+          groupApi.util.updateQueryData(
+            "getGroupMessages",
+            { conversationId: message.conversationId },
+            (data) => {
+              return {
+                ...data,
+                messages: [...data.messages, message],
+              };
+            }
+          )
+        );
+      }
     },
     [dispatch, id]
   );

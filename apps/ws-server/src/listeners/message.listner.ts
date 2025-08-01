@@ -7,6 +7,7 @@ type TMessage = {
   content: string;
   senderId: string;
   senderName: string;
+  type : "DIRECT" | "GROUP";
 };
 
 const messageListeners = (
@@ -16,13 +17,13 @@ const messageListeners = (
 ) => {
   socket.on(
     "send:message",
-    async ({ conversationId, content, senderId, senderName }: TMessage) => {
+    async ({ conversationId, content, senderId, senderName , type }: TMessage) => {
       try {
         // Check for missing required fields
-        if (!conversationId || !content || !senderId || !senderName) {
+        if (!conversationId || !content || !senderId || !senderName || !type || (type !== "DIRECT" && type !== "GROUP")) {
           socket.emit(
             "err",
-            "conversationId , content , senderId , senderName are required to send message",
+            "conversationId , content , senderId , senderName , type are required to send message",
           );
           return;
         } else {
@@ -31,7 +32,7 @@ const messageListeners = (
             socket.emit("err", "Not joined the group yet. Cannot send message");
             return;
           }
-          const createdAt = new Date().toISOString();
+          const createdAt = new Date();
           const messageObj = {
             content,
             senderId,
@@ -69,7 +70,7 @@ const messageListeners = (
                 ],
               });
               // Broadcast the message to the room
-              io.to(conversationId).emit("receive:message", messageObj);
+              io.to(conversationId).emit("receive:message", {...messageObj, type});
             } catch (error) {
               console.error("Error sending message to Kafka:", error);
               await client.lRem(

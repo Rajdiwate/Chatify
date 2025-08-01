@@ -8,6 +8,8 @@
 
         fix recieve message listener to send the type of convo and on frontend update the state of the rtk to display group messages
 
+        Debug why      const groupMessagesData = useLazyGetGroupMessagesQuery()[1];     does not work around different components but works if passed as props
+
 
         when user opens the group chat box , on the header give option to invite friends
         on clicking on that , the user should see a popup which will have a list of names(friends) to whome he can send invite ==> call the send Invite api.

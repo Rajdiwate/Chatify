@@ -54,6 +54,9 @@ export const groupApi = createApi({
         headers: { "Content-type": "application/json" },
         credentials: "include",
       }),
+      transformResponse : (data : TgetMessagesResponse)=>{
+        return data
+      },
       providesTags: ["Group"],
     }),
   }),

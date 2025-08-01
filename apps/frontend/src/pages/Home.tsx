@@ -16,7 +16,7 @@ import { useLazyGetGroupMessagesQuery, type TGroup } from "../lib/rtk/groupApi";
 export default function HomePage() {
   const { user, loading } = useAuth();
   const { currentConversation } = useConversation();
-  const [getGroupMessages] = useLazyGetGroupMessagesQuery();
+  const [getGroupMessages , groupMessageData] = useLazyGetGroupMessagesQuery();
   const [currentGroup, setCurrentGroup] = useState<TGroup>();
   const { dispatch } = useAppHelpers();
   const { navigate } = useAppHelpers();
@@ -85,6 +85,7 @@ export default function HomePage() {
             lastSeen={getLastSeen()}
             chatType={ selectedTab === 0 ? "DIRECT" : "GROUP"}
             group={currentGroup}
+            groupMessages = {groupMessageData.data?.messages}
           />
         </Box>
       </Box>

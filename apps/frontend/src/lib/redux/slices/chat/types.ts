@@ -24,4 +24,5 @@ export type TChatMessage = {
   senderName: string;
   conversationId: string;
   content: string;
+  type? : "DIRECT" | "GROUP";
 };

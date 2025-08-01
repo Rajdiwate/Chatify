@@ -14,13 +14,15 @@ import type { conversationType } from "../../lib/redux/slices/conversation/types
 import useChat from "../../lib/hooks/useChat";
 import { useSocket } from "../../lib/socket/useSocket";
 import { useAuth } from "../../lib/hooks/useAuth";
-import { useLazyGetGroupMessagesQuery, type TGroup } from "../../lib/rtk/groupApi";
+import { type TGroup } from "../../lib/rtk/groupApi";
+import type { TChatMessage } from "../../lib/redux/slices/chat/types";
 
 interface ChatBoxProps {
   chatName?: string;
   lastSeen?: string;
   chatType: conversationType;
   group?: TGroup;
+  groupMessages?: TChatMessage[];
 }
 
 export function ChatBox({
@@ -28,12 +30,13 @@ export function ChatBox({
   lastSeen,
   chatType,
   group,
+  groupMessages,
 }: ChatBoxProps) {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const socket = useSocket();
   const { messages, id } = useChat();
-  const groupMessagesData = useLazyGetGroupMessagesQuery()[1];
+  // const groupMessagesData = useLazyGetGroupMessagesQuery()[1];    
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -42,18 +45,27 @@ export function ChatBox({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+    console.log("groupMessagesData", groupMessages);
+  }, [messages, groupMessages]);
 
   const handleSendMessage = () => {
     console.log("sending message , out ", id, user, user?.username, user?.id);
 
-    if (message.trim() && id && user && user.username && user.id) {
+    if (
+      message.trim() &&
+      id &&
+      user &&
+      user.username &&
+      user.id &&
+      (chatType === "DIRECT" || chatType === "GROUP")
+    ) {
       console.log("sendig message , in");
       socket?.emit("send:message", {
         content: message,
         senderId: user?.id,
         senderName: user?.username,
         conversationId: chatType === "GROUP" ? group?.id : id,
+        type: chatType,
       });
       console.log("message sent");
       setMessage("");
@@ -110,7 +122,7 @@ export function ChatBox({
           </>
         ) : (
           <>
-            {groupMessagesData.data?.messages?.map((msg, i) => (
+            {groupMessages?.map((msg, i) => (
               <ChatMessage key={i} {...msg} />
             ))}
           </>
