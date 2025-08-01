@@ -6,43 +6,47 @@ import { ChatBox } from "../components/home/chat-box";
 import { useAuth } from "../lib/hooks/useAuth";
 import { LoadingSpinner } from "../components/loading/loading-spinner";
 import { useAppHelpers } from "../lib/hooks/useAppHelpers";
-import type { dbFriend } from "../lib/redux/slices/conversation/types";
-import { setCurrentConversation } from "../lib/redux/slices/conversation/ConversationSlice";
+import type {
+  dbFriend,
+  TGroupConversation,
+} from "../lib/redux/slices/conversation/types";
+import {
+  setCurrentDirectConversation,
+  setCurrentGroupConversation,
+} from "../lib/redux/slices/conversation/ConversationSlice";
 import { useConversation } from "../lib/hooks/useConversation";
 import { getMessagesThunk } from "../lib/redux/slices/chat/thunks";
 import { setConversationId } from "../lib/redux/slices/chat/ChatSlice";
-import { useLazyGetGroupMessagesQuery, type TGroup } from "../lib/rtk/groupApi";
 
 export default function HomePage() {
   const { user, loading } = useAuth();
-  const { currentConversation } = useConversation();
-  const [getGroupMessages , groupMessageData] = useLazyGetGroupMessagesQuery();
-  const [currentGroup, setCurrentGroup] = useState<TGroup>();
+  const { currentDirectConversation, currentGroupConversation } =
+    useConversation();
   const { dispatch } = useAppHelpers();
   const { navigate } = useAppHelpers();
   const [selectedTab, setSelectedTab] = useState(0);
   const handleSelectChat = ({
     id,
-    type,
     group,
+    type,
     friend,
   }: {
     id: string;
     type: "GROUP" | "DIRECT";
-    group?: TGroup;
+    group?: TGroupConversation;
     friend?: dbFriend;
   }) => {
-    if (type === "DIRECT") {
-      dispatch(setConversationId(id));
-      setCurrentGroup(undefined);
-      dispatch(setCurrentConversation({ id, friend }));
-      dispatch(getMessagesThunk({ conversationId: id }));
-    } else {
-      dispatch(setConversationId(id));
-      getGroupMessages({conversationId : id});
-      console.log("current group", group);
-      setCurrentGroup(group);
-    }
+    dispatch(setConversationId(id));
+    if (type === "GROUP" && group)
+      dispatch(
+        setCurrentGroupConversation({
+          id,
+          groupName: group.groupName,
+          members: group.members,
+        })
+      );
+    else dispatch(setCurrentDirectConversation({ id, friend }));
+    dispatch(getMessagesThunk({ conversationId: id }));
   };
 
   const getLastSeen = () => {
@@ -75,17 +79,23 @@ export default function HomePage() {
       <Box className="flex-1 flex overflow-hidden">
         {/* Left Section - Friend Selection */}
         <Box className="w-80 border-r border-gray-200 bg-white">
-          <FriendSelection onSelectChat={handleSelectChat} setSelectedTab={setSelectedTab} selectedTab={selectedTab}  />
+          <FriendSelection
+            onSelectChat={handleSelectChat}
+            setSelectedTab={setSelectedTab}
+            selectedTab={selectedTab}
+          />
         </Box>
 
         {/* Right Section - Chat Box */}
         <Box className="flex-1">
           <ChatBox
-            chatName={selectedTab === 1 ? currentGroup?.groupName :  currentConversation?.friend.username  }
+            chatName={
+              selectedTab === 1
+                ? currentGroupConversation?.groupName
+                : currentDirectConversation?.friend.username
+            }
             lastSeen={getLastSeen()}
-            chatType={ selectedTab === 0 ? "DIRECT" : "GROUP"}
-            group={currentGroup}
-            groupMessages = {groupMessageData.data?.messages}
+            chatType={selectedTab === 0 ? "DIRECT" : "GROUP"}
           />
         </Box>
       </Box>

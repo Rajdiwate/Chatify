@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useAppSelector } from "./redux";
 import { useAppHelpers } from "./useAppHelpers";
-import { getConversationThunk } from "../redux/slices/conversation/thunks";
+import { getDirectConversationThunk, getGroupConversationThunk } from "../redux/slices/conversation/thunks";
 import type { conversationType } from "../redux/slices/conversation/types";
 
 export const useConversation = () => {
@@ -11,14 +11,17 @@ export const useConversation = () => {
     directConversations,
     groupConversations,
     fetched,
-    currentConversation,
+    currentDirectConversation,
+    currentGroupConversation
   } = useAppSelector((state) => state.conversation);
   const { dispatch } = useAppHelpers();
   const { user } = useAppSelector((state) => state.auth);
 
   const getConversations = useCallback(
     async (type: conversationType) => {
-      dispatch(getConversationThunk(type));
+      if(type !== "DIRECT" && type !== "GROUP") return;
+      else if(type === "GROUP") dispatch(getGroupConversationThunk(type));
+      else dispatch(getDirectConversationThunk(type));
     },
     [dispatch],
   );
@@ -32,7 +35,8 @@ export const useConversation = () => {
   return {
     loading,
     error,
-    currentConversation,
+    currentDirectConversation,
+    currentGroupConversation,
     directConversations,
     groupConversations,
     getConversations,

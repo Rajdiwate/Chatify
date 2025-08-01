@@ -14,29 +14,22 @@ import type { conversationType } from "../../lib/redux/slices/conversation/types
 import useChat from "../../lib/hooks/useChat";
 import { useSocket } from "../../lib/socket/useSocket";
 import { useAuth } from "../../lib/hooks/useAuth";
-import { type TGroup } from "../../lib/rtk/groupApi";
-import type { TChatMessage } from "../../lib/redux/slices/chat/types";
 
 interface ChatBoxProps {
   chatName?: string;
   lastSeen?: string;
   chatType: conversationType;
-  group?: TGroup;
-  groupMessages?: TChatMessage[];
 }
 
 export function ChatBox({
   chatName = "Select a chat",
   lastSeen,
   chatType,
-  group,
-  groupMessages,
 }: ChatBoxProps) {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const socket = useSocket();
   const { messages, id } = useChat();
-  // const groupMessagesData = useLazyGetGroupMessagesQuery()[1];    
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -45,8 +38,7 @@ export function ChatBox({
 
   useEffect(() => {
     scrollToBottom();
-    console.log("groupMessagesData", groupMessages);
-  }, [messages, groupMessages]);
+  }, [messages]);
 
   const handleSendMessage = () => {
     console.log("sending message , out ", id, user, user?.username, user?.id);
@@ -64,7 +56,7 @@ export function ChatBox({
         content: message,
         senderId: user?.id,
         senderName: user?.username,
-        conversationId: chatType === "GROUP" ? group?.id : id,
+        conversationId:  id,
         type: chatType,
       });
       console.log("message sent");
@@ -113,18 +105,12 @@ export function ChatBox({
               Select a friend or group to start chatting
             </Typography>
           </Box>
-        ) : chatType === "DIRECT" ? (
+        ) : (
           <>
             {messages?.map((msg, i) => (
               <ChatMessage key={i} {...msg} />
             ))}
             <div ref={messagesEndRef} />
-          </>
-        ) : (
-          <>
-            {groupMessages?.map((msg, i) => (
-              <ChatMessage key={i} {...msg} />
-            ))}
           </>
         )}
       </Box>

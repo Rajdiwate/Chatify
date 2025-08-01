@@ -5,36 +5,36 @@ import { UserCard } from "../ui/user-card";
 import { GroupCard } from "../ui/group-card";
 import { useConversation } from "../../lib/hooks/useConversation";
 import { UserCardSkeleton } from "../loading/skeleton-loader";
-import type { dbFriend } from "../../lib/redux/slices/conversation/types";
+import type { dbFriend, TGroupConversation } from "../../lib/redux/slices/conversation/types";
 import CreateGroupModal from "../ui/create-group-modal";
-import { useGetGroupConversationsQuery, type TGroup } from "../../lib/rtk/groupApi";
 
 interface FriendSelectionProps {
   onSelectChat: (chatInfo: {
     id: string;
     type: "GROUP" | "DIRECT";
-    group?: TGroup;
+    group?: TGroupConversation;
     friend?: dbFriend;
   }) => void;
-  selectedChatId?: string;
   setSelectedTab: React.Dispatch<React.SetStateAction<number>>;
   selectedTab: number;
 }
 export function FriendSelection({
   onSelectChat,
-  selectedChatId,
   setSelectedTab,
-  selectedTab
+  selectedTab,
 }: FriendSelectionProps) {
-
-  const groupData = useGetGroupConversationsQuery();
+  const { getConversations, groupConversations } = useConversation();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
-  const { directConversations, loading, currentConversation } =
+  const { directConversations, loading, currentDirectConversation , currentGroupConversation } =
     useConversation();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     event.preventDefault();
     setSelectedTab(newValue);
+    if (newValue === 1) {
+      if(!groupConversations.length)
+      getConversations("GROUP");
+    }
   };
 
   return (
@@ -88,7 +88,7 @@ export function FriendSelection({
                     key={conv.id}
                     friend={conv.friend}
                     lastMessage={conv.messages ? conv.messages[0]?.content : ""}
-                    isSelected={currentConversation?.id === conv.id}
+                    isSelected={currentDirectConversation?.id === conv.id}
                     onClick={() =>
                       onSelectChat({
                         type: "DIRECT",
@@ -102,20 +102,14 @@ export function FriendSelection({
             ) : (
               <>Search For new Friend to Chat</>
             )
-          ) : groupData.isLoading ? (
-            <>
-              <UserCardSkeleton />
-              <UserCardSkeleton />
-              <UserCardSkeleton />
-            </>
           ) : (
-            groupData.data && (
+            groupConversations && groupConversations.length && (
               <Box>
                 <Typography
                   variant="h6"
                   className="text-gray-800 mb-4 font-semibold"
                 >
-                  Groups ({groupData.data.conversations.length}){" "}
+                  Groups ({groupConversations.length}){" "}
                   <button
                     className=" mx-5 text-black px-2 rounded-full text-xl border-2"
                     onClick={() => setCreateGroupOpen(true)}
@@ -123,18 +117,18 @@ export function FriendSelection({
                     +
                   </button>
                 </Typography>
-                {groupData.data.conversations.map((group) => (
+                {groupConversations.map((group) => (
                   <GroupCard
                     key={group.id}
                     id={group.id}
                     memberCount={group.members.length}
                     name={group.groupName}
-                    isSelected={selectedChatId === group.id}
+                    isSelected={currentGroupConversation?.id === group.id}
                     onClick={() =>
                       onSelectChat({
                         id: group.id,
                         type: "GROUP",
-                        group : group
+                        group: group,
                       })
                     }
                   />

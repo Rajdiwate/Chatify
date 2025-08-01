@@ -30,12 +30,13 @@ export type TConversationState = {
   fetched: boolean;
   groupConversations: TGroupConversation[];
   directConversations: TDirectConversation[];
-  currentConversation?: TDirectConversation;
+  currentDirectConversation?: TDirectConversation;
+  currentGroupConversation?: TGroupConversation;
 };
 
 export type TGetConversationResponse = {
   success: true;
-  conversations: TDirectConversation[];
+  conversations: TDirectConversation[] | TGroupConversation[];
 };
 
 export type TAcceptRequestResponse = {

@@ -4,6 +4,7 @@ export type TChatState = {
   id?: string; // conversation Id set it when user clicks on the chat and fetch the messages using it
   messages?: TChatMessage[];
   members?: member[];
+  type : "DIRECT" | "GROUP";
 };
 
 export type TgetMessagesResponse = {

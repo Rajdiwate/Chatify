@@ -4,6 +4,7 @@ import { getMessagesThunk } from "./thunks";
 
 const initialState: TChatState = {
   loading: false,
+  type: "DIRECT",
 };
 
 export const ChatSlice = createSlice({
@@ -29,6 +30,11 @@ export const ChatSlice = createSlice({
         state.error = "";
         state.messages = action.payload.messages;
         state.members = action.payload.members;
+        if (action.payload.messages.length > 2) {
+          state.type = "GROUP";
+        } else {
+          state.type = "DIRECT";
+        }
       })
       .addCase(getMessagesThunk.rejected, (state, action) => {
         state.loading = false;

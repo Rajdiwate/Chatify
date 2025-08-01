@@ -11,25 +11,23 @@ import {
   addToPendingRequests,
   increasePendingReq,
 } from "../lib/redux/slices/auth/AuthSlice";
-import { groupApi, useGetGroupConversationsQuery } from "../lib/rtk/groupApi";
 
 const HomeLayout = ({ children }: { children: ReactNode }) => {
   const socket = useSocket();
   const { dispatch } = useAppHelpers();
   const { id } = useChat();
-  const { directConversations, getConversations } = useConversation();
-  const groupData = useGetGroupConversationsQuery();
+  const { directConversations, getConversations  , groupConversations} = useConversation();
 
   const handleSendConversations = useCallback(() => {
     const directIds = directConversations.map((c) => c.id);
-    const groupIds = groupData.data?.conversations?.map((c) => c.id) || [];
+    const groupIds = groupConversations.map((c) => c.id) || [];
 
     const rooms = [...directIds, ...groupIds];
 
     if (rooms && rooms.length) {
       socket?.emit("conversation", { rooms });
     }
-  }, [directConversations, socket, groupData.data?.conversations]);
+  }, [directConversations, socket, groupConversations]);
 
   const handleRecieveMessages = useCallback(
     (message: TChatMessage) => {
@@ -49,7 +47,6 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
         });
         return;
       }
-      if (message.type === "DIRECT") {
         //push the message into the current open conversation(ChatSlice) if chat is open
         if (id && id === message.conversationId) {
           console.log("chat is open, adding message");
@@ -59,22 +56,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
         // ws should send the type of convo as well later
         console.log("adding message in direct conversations");
         dispatch(pushMessageInDirectConvorsation(message));
-      } else {
-        console.log("addming message to group");
-        dispatch(
-          groupApi.util.updateQueryData(
-            "getGroupMessages",
-            { conversationId: message.conversationId },
-            (data) => {
-              return {
-                ...data,
-                messages: [...data.messages, message],
-              };
-            }
-          )
-        );
-      }
-    },
+      },
     [dispatch, id]
   );
   const handleError = useCallback((message: string) => {

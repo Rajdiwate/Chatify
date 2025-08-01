@@ -11,8 +11,8 @@ export const getMessagesThunk = createAsyncThunk<
   Pick<TgetMessagesResponse, "messages" | "members">,
   getMessagesInput,
   { rejectValue: string; state: RootState }
->("/getChat", async ({ conversationId }, { rejectWithValue, getState }) => {
-  const data = await getMessagesRequest(conversationId);
+>("/getChat", async ({ conversationId}, { rejectWithValue, getState }) => {
+  const data = await getMessagesRequest(conversationId );
   if (data.success) {
     // take the messages from the directConvo messages
     // merge the incomming messages with that of directConvo messages based on createdAt and return

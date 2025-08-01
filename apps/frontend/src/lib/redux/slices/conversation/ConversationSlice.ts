@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { TConversationState } from "./types";
-import { acceptFriendRequestThunk, getConversationThunk } from "./thunks";
+import { acceptFriendRequestThunk, getDirectConversationThunk, getGroupConversationThunk } from "./thunks";
 
 const initialState: TConversationState = {
   loading: false,
@@ -22,28 +22,47 @@ export const ConversationSlice = createSlice({
     resetConversation: () => {
       return initialState;
     },
-    setCurrentConversation: (state, action) => {
-      state.currentConversation = action.payload;
+    setCurrentDirectConversation: (state, action) => {
+      state.currentDirectConversation = action.payload;
+    },
+     setCurrentGroupConversation: (state, action) => {
+      state.currentGroupConversation = action.payload;
     },
     pushMessageInDirectConvorsation: (state, action) => {
       const conversation = state.directConversations.find(
-        (c) => c.id === action.payload.conversationId,
+        (c) => c.id === action.payload.conversationId
       );
       conversation?.messages.unshift(action.payload);
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getConversationThunk.pending, (state) => {
+      .addCase(getDirectConversationThunk.pending, (state) => {
         state.loading = true;
         state.error = "";
       })
-      .addCase(getConversationThunk.fulfilled, (state, action) => {
+      .addCase(getDirectConversationThunk.fulfilled, (state, action) => {
         state.directConversations = action.payload;
         state.loading = false;
         state.fetched = true;
       })
-      .addCase(getConversationThunk.rejected, (state, action) => {
+      .addCase(getDirectConversationThunk.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+        state.fetched = true;
+      });
+
+    builder
+      .addCase(getGroupConversationThunk.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(getGroupConversationThunk.fulfilled, (state, action) => {
+        state.groupConversations = action.payload;
+        state.loading = false;
+        state.fetched = true;
+      })
+      .addCase(getGroupConversationThunk.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
         state.fetched = true;
@@ -70,6 +89,7 @@ export const {
   sendRequest,
   pushtoDirectConversation,
   resetConversation,
-  setCurrentConversation,
+  setCurrentGroupConversation,
+  setCurrentDirectConversation,
   pushMessageInDirectConvorsation,
 } = ConversationSlice.actions;

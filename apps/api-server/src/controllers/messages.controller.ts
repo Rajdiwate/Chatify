@@ -62,7 +62,7 @@ export const getMessages = asyncHandler(async (req, res, next) => {
   const uniqueMessages = Array.from(
     new Map(mergedMessages.map((msg) => [msg.createdAt, msg])).values(),
   ).sort((a, b) => {
-    return a.createdAt > b.createdAt ? -1 : 1;
+    return a.createdAt < b.createdAt ? -1 : 1;
   });
 
   if (!convo) {
