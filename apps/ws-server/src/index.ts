@@ -8,6 +8,7 @@ import { Kafka, Partitioners } from "kafkajs";
 import messageListeners from "./listeners/message.listner";
 import { config } from "dotenv";
 import requestListener from "./listeners/friendRequest.listener";
+import groupInviteListeners from "./listeners/groupInvite.listener";
 
 config();
 
@@ -79,6 +80,7 @@ io.on("connection", (socket) => {
   conversationListeners(io, socket, client);
   messageListeners(io, socket, client);
   requestListener(io, socket, client);
+  groupInviteListeners(io, socket, client);
 
   socket.on("disconnect", async () => {
     // find the user based on the socket Id in redis , and remove it

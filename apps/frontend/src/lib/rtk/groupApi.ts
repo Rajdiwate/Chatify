@@ -13,6 +13,15 @@ export type TGroup = {
   }[];
 };
 
+export type TInvite =  {
+    id: string;
+    createdAt: Date;
+    senderId: string;
+    receiverId: string;
+    conversationId: string;
+}
+
+
 export type TGetGroupConversationsResponse = {
   success: true;
   conversations: TGroup[];
@@ -35,7 +44,7 @@ export const groupApi = createApi({
     }),
 
     sendGroupInvite: builder.mutation<
-      { success: boolean },
+      { success: boolean , invites: TInvite[]},
       { conversationId: string; receiverIds: string[] }
     >({
       query: (data: { conversationId: string; receiverIds: string[] }) => ({

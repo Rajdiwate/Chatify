@@ -89,7 +89,7 @@ export const invitToGroup = asyncHandler(async (req, res, next) => {
     throw new AppError("Failed to invite user", 500);
   }
 
-  return res.status(200).json({ success: true });
+  return res.status(200).json({ success: true , invites : data});
 });
 
 export const acceptInvite = asyncHandler(async (req, res, next) => {

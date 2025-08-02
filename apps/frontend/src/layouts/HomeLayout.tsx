@@ -8,7 +8,9 @@ import useChat from "../lib/hooks/useChat";
 import { pushMessageInDirectConvorsation } from "../lib/redux/slices/conversation/ConversationSlice";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import {
+  addToPendingInvites,
   addToPendingRequests,
+  increasePendingInvite,
   increasePendingReq,
 } from "../lib/redux/slices/auth/AuthSlice";
 
@@ -16,7 +18,8 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
   const socket = useSocket();
   const { dispatch } = useAppHelpers();
   const { id } = useChat();
-  const { directConversations, getConversations  , groupConversations} = useConversation();
+  const { directConversations, getConversations, groupConversations } =
+    useConversation();
 
   const handleSendConversations = useCallback(() => {
     const directIds = directConversations.map((c) => c.id);
@@ -47,16 +50,16 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
         });
         return;
       }
-        //push the message into the current open conversation(ChatSlice) if chat is open
-        if (id && id === message.conversationId) {
-          console.log("chat is open, adding message");
-          dispatch(addMessages(message));
-        }
-        // push the message in the  messages array of the conversations(direct/group)
-        // ws should send the type of convo as well later
-        console.log("adding message in direct conversations");
-        dispatch(pushMessageInDirectConvorsation(message));
-      },
+      //push the message into the current open conversation(ChatSlice) if chat is open
+      if (id && id === message.conversationId) {
+        console.log("chat is open, adding message");
+        dispatch(addMessages(message));
+      }
+      // push the message in the  messages array of the conversations(direct/group)
+      // ws should send the type of convo as well later
+      console.log("adding message in direct conversations");
+      dispatch(pushMessageInDirectConvorsation(message));
+    },
     [dispatch, id]
   );
   const handleError = useCallback((message: string) => {
@@ -89,7 +92,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
         toast.info(`${senderName} sent you a friend request`, {
           position: "top-right",
           autoClose: 5000,
-          hideProgressBar: false,
+          hideProgressBar: true,
           closeOnClick: false,
           pauseOnHover: true,
           draggable: true,
@@ -111,6 +114,34 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     [getConversations]
   );
 
+  const handleRecieveInvite = useCallback(
+    (data: {
+      id: string;
+      conversation: {
+        name: string;
+        id: string;
+      };
+    }) => {
+      console.log("invite recieved", data);
+      // increase the pending Invite count in user Slice
+      // add the invite to the pending invites array in the user Slice
+      dispatch(increasePendingInvite());
+      dispatch(addToPendingInvites(data));
+      toast.info(`Invitation from ${data.conversation.name}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     handleSendConversations();
   }, [directConversations, handleSendConversations]);
@@ -120,9 +151,11 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     socket?.on("receive:message", handleRecieveMessages);
     socket?.on("receive:request", handleReceiveRequest);
     socket?.on("accept:request", handleAcceptRequest);
+    socket?.on("receive:invite", handleRecieveInvite);
     socket?.on("err", handleError);
     return () => {
       socket?.off("err", handleError);
+      socket?.off("receive:invite", handleRecieveInvite);
       socket?.off("authenticated", handleSendConversations);
       socket?.off("receive:message", handleRecieveMessages);
       socket?.off("receive:request", handleReceiveRequest);
@@ -135,6 +168,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     handleError,
     handleReceiveRequest,
     handleAcceptRequest,
+    handleRecieveInvite,
   ]);
 
   return (

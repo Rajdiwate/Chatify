@@ -23,10 +23,23 @@ const authSlice = createSlice({
         state.user.pendingRequestsNumber -= 1;
       }
     },
+    reducePendingInvite: (state) => {
+      if (state.user && state.user.pendingInvitesNumber > 0) {
+        state.user.pendingInvitesNumber -= 1;
+      }
+    },
     increasePendingReq: (state) => {
       if (state.user) {
         state.user.pendingRequestsNumber += 1;
       }
+    },
+    increasePendingInvite: (state) => {
+      if (state.user) {
+        state.user.pendingInvitesNumber += 1;
+      }
+    },
+    addToPendingInvites: (state, action) => {
+      state.pendingInvites?.push(action.payload);
     },
     addToPendingRequests: (state, action) => {
       state.pendingRequests?.push(action.payload);
@@ -45,7 +58,6 @@ const authSlice = createSlice({
         );
       }
     },
-
     onInviteAccept: (state, action) => {
       const initialLength = state.pendingRequests?.length || 0;
       state.pendingInvites = state.pendingInvites.filter(
@@ -151,5 +163,8 @@ export const {
   onInviteAccept,
   resetAuth,
   increasePendingReq,
+  addToPendingInvites,
+  increasePendingInvite,
   addToPendingRequests,
+  reducePendingInvite,
 } = authSlice.actions;

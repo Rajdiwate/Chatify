@@ -15,6 +15,8 @@ import {
 import { useConversation } from "../../lib/hooks/useConversation";
 import { useSendGroupInviteMutation } from "../../lib/rtk/groupApi";
 import { toast } from "react-toastify";
+import { useSocket } from "../../lib/socket/useSocket";
+import { useAuth } from "../../lib/hooks/useAuth";
 
 // Zod schema for form validation
 const addMembersSchema = z.object({
@@ -39,7 +41,8 @@ const AddMembersModal = ({
   const { directConversations, currentGroupConversation } = useConversation();
   const sendInvite = useSendGroupInviteMutation()[0];
   const { isLoading } = useSendGroupInviteMutation()[1];
-
+  const socket = useSocket();
+  const { user } = useAuth();
   const notJoinedMembers = directConversations.filter((conversation) => {
     const friendId = conversation.friend.id;
     const isAlreadyMember = currentGroupConversation?.members.some(
@@ -65,17 +68,29 @@ const AddMembersModal = ({
   const friendConversations =
     notJoinedMembers?.filter((conversation) => conversation.friend) || [];
 
-  const onSubmit = async (data: AddMembersFormData) => {
+  const onSubmit = async (formData: AddMembersFormData) => {
     await sendInvite({
       conversationId,
-      receiverIds: data.selectedFriends,
+      receiverIds: formData.selectedFriends,
     }).then(({ data }) => {
+      if (data?.invites) {
+        for (let i = 0; i < data.invites.length; i++) {
+          console.log("sending invite", data.invites[i]);
+          socket?.emit("send:invite", {
+            inviteId : data.invites[i].id,
+            conversationId : data.invites[i].conversationId,
+            to: formData.selectedFriends,
+            groupName: currentGroupConversation?.groupName ,
+            from: user?.id,
+          });
+        }
+      }
+
       if (data?.success) {
         toast("Invite sent successfully", { type: "success" });
       }
     });
 
-    console.log("Selected friend IDs:", data.selectedFriends);
     reset();
     onClose();
   };

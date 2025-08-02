@@ -19,6 +19,7 @@ import { acceptFriendRequestThunk } from "../../lib/redux/slices/conversation/th
 import {
   onInviteAccept,
   onRequestAccept,
+  reducePendingInvite,
   reducePendingReq,
 } from "../../lib/redux/slices/auth/AuthSlice";
 import { useSocket } from "../../lib/socket/useSocket";
@@ -91,6 +92,7 @@ export function FriendRequestPopover({
           });
           // update the number of pending Invites
           dispatch(onInviteAccept(id));
+          dispatch(reducePendingInvite())
           socket?.emit("accept:request", {
             senderId: id,
             type: "GROUP",
