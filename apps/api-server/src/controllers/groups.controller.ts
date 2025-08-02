@@ -127,7 +127,7 @@ export const acceptInvite = asyncHandler(async (req, res, next) => {
     throw new AppError("Failed to accept invite", 500);
   }
 
-  return res.status(201).json({ succes: true, member });
+  return res.status(201).json({ success: true, member });
 });
 
 export const getPendingGroupInvites = asyncHandler(async (req, res, next) => {

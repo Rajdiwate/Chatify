@@ -8,7 +8,7 @@ interface GroupRequestCardProps {
     name: string;
     id: string;
   };
-  onAccept: (id: string) => void;
+  onAccept: (id: string , conversationId : string) => void;
   onDecline: (id: string) => void;
   isProcessing?: boolean;
 }
@@ -49,7 +49,7 @@ const GroupRequestCard = ({
           <Tooltip title="Accept">
             <IconButton
               color="success"
-              onClick={() => onAccept(id)}
+              onClick={() => onAccept(id ,conversation.id)}
               disabled={isProcessing}
             >
               <Check className="w-6 h-6" />

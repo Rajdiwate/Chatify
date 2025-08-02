@@ -46,7 +46,23 @@ export const groupApi = createApi({
         credentials: "include",
       }),
     }),
+    acceptGroupInvite: builder.mutation<
+      { success: boolean },
+      { inviteId: string; conversationId: string }
+    >({
+      query: (data: { inviteId: string; conversationId: string }) => ({
+        url: "/group/invite/accept",
+        method: "POST",
+        body: data,
+        headers: { "Content-type": "application/json" },
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useCreateGroupMutation, useSendGroupInviteMutation } = groupApi;
+export const {
+  useCreateGroupMutation,
+  useSendGroupInviteMutation,
+  useAcceptGroupInviteMutation,
+} = groupApi;

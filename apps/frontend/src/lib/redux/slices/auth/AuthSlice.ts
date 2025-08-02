@@ -45,6 +45,22 @@ const authSlice = createSlice({
         );
       }
     },
+
+    onInviteAccept: (state, action) => {
+      const initialLength = state.pendingRequests?.length || 0;
+      state.pendingInvites = state.pendingInvites.filter(
+        (invite) => invite.id !== action.payload
+      );
+
+      // Keep counter in sync
+      const removedCount = initialLength - state.pendingInvites.length;
+      if (removedCount > 0 && state.user?.pendingInvitesNumber) {
+        state.user.pendingInvitesNumber = Math.max(
+          0,
+          state.user.pendingInvitesNumber - removedCount
+        );
+      }
+    },
     resetAuth: () => {
       return initialState;
     },
@@ -110,7 +126,7 @@ const authSlice = createSlice({
       .addCase(getPendingRequestsThunk.rejected, (state, action) => {
         state.error = action.payload;
       });
-    
+
     builder
       .addCase(getPendingInvitesThunk.pending, (state) => {
         state.error = "";
@@ -124,7 +140,7 @@ const authSlice = createSlice({
       })
       .addCase(getPendingInvitesThunk.rejected, (state, action) => {
         state.error = action.payload;
-      })
+      });
   },
 });
 
@@ -132,6 +148,7 @@ export default authSlice.reducer;
 export const {
   reducePendingReq,
   onRequestAccept,
+  onInviteAccept,
   resetAuth,
   increasePendingReq,
   addToPendingRequests,
