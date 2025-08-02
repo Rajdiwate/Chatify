@@ -44,6 +44,10 @@ const groupInviteListeners = (
       });
     }
   );
+
+  socket.on("accept:invite" , ({conversationId} : {conversationId : string})=>{
+    
+  })
 };
 
 export default groupInviteListeners;
