@@ -115,7 +115,10 @@ export const getCurrentUser = asyncHandler(
       where: {
         id: userId,
       },
-      include: { receivedFriendRequests: { where: { status: "PENDING" } } },
+      include: {
+        receivedFriendRequests: { where: { status: "PENDING" } },
+        receivedInvites: { where: { status: "PENDING" } },
+      },
     });
 
     if (!user) {
@@ -123,11 +126,20 @@ export const getCurrentUser = asyncHandler(
     }
 
     const pendingRequestsNumber = user.receivedFriendRequests.length;
-    const { receivedFriendRequests, ...userWithoutRecievedRequests } = user;
+    const pendingInvitesNumber = user.receivedInvites.length;
+    const {
+      receivedFriendRequests,
+      receivedInvites,
+      ...userWithoutRecievedRequests
+    } = user;
 
     return res.status(200).json({
       success: true,
-      user: { ...userWithoutRecievedRequests, pendingRequestsNumber },
+      user: {
+        ...userWithoutRecievedRequests,
+        pendingRequestsNumber,
+        pendingInvitesNumber,
+      },
     });
   }
 );
@@ -342,10 +354,13 @@ export const getGroupInvites = asyncHandler(async (req, res, next) => {
     },
   });
 
-  if(!invites){
+  if (!invites) {
     throw new AppError("No such user", 404);
   }
-  return res.status(200).json({success:true, invites: invites.receivedInvites.map(invite=>invite.sender)});
+  return res.status(200).json({
+    success: true,
+    invites: invites.receivedInvites.map((invite) => invite.sender),
+  });
 });
 
 export const logout = asyncHandler(

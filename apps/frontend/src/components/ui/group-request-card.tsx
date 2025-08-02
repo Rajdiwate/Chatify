@@ -1,5 +1,5 @@
-import { Avatar, IconButton, Paper, Tooltip, Typography } from "@mui/material";
-import { Box, Check, X } from "lucide-react";
+import {  Box,Avatar, IconButton, Paper, Tooltip, Typography } from "@mui/material";
+import { Check, X } from "lucide-react";
 
 interface GroupRequestCardProps {
   id: string;

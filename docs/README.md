@@ -6,19 +6,8 @@
 
 # TODO --->
 
-        rtk query is being used in create group. Keep it as it is. also invite and accept group invite should be implemented through rtk query.
+        Integrate the accept invite api,  on accepting the invite , update the group convos
 
-        when user opens the group chat box , on the header give option to invite friends
-        on clicking on that , the user should see a popup which will have a list of names(friends) to whome he can send invite ==> call the send Invite api.
-            on accepting the invite , update the group convos
-
-
-
-    if user wants to add someone to the group , show him the list of DIRECT convo he has to select the friends he wants to add
-
-    if user wants to send group invites to another user --> create a group invite with sender and receiver id
-
-    with the help of this , multiple user in the group can invite different persons(friends). but the outside cannot search and join the group
 
 
     create ops files of k8s for deploying the project

@@ -7,6 +7,8 @@ import {
   IconButton,
   Divider,
   Avatar,
+  Button,
+  Stack,
 } from "@mui/material";
 import { Send, Circle } from "lucide-react";
 import { ChatMessage } from "../ui/chat-message";
@@ -14,6 +16,8 @@ import type { conversationType } from "../../lib/redux/slices/conversation/types
 import useChat from "../../lib/hooks/useChat";
 import { useSocket } from "../../lib/socket/useSocket";
 import { useAuth } from "../../lib/hooks/useAuth";
+import AddMembersModal from "../ui/add-members-modal";
+import { useConversation } from "../../lib/hooks/useConversation";
 
 interface ChatBoxProps {
   chatName?: string;
@@ -29,7 +33,9 @@ export function ChatBox({
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const socket = useSocket();
+  const { currentGroupConversation } = useConversation();
   const { messages, id } = useChat();
+  const [showAddMembers, setShowAddMembers] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -56,7 +62,7 @@ export function ChatBox({
         content: message,
         senderId: user?.id,
         senderName: user?.username,
-        conversationId:  id,
+        conversationId: id,
         type: chatType,
       });
       console.log("message sent");
@@ -74,7 +80,12 @@ export function ChatBox({
   return (
     <Box className="h-full flex flex-col bg-white">
       {/* Chat Header */}
-      <Box className="p-4 border-b border-gray-200 bg-gray-50">
+      <Stack
+        className="p-4 border-b border-gray-200 bg-gray-50"
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
         <Box className="flex items-center gap-3">
           <Avatar className="w-10 h-10 bg-blue-500">
             {chatName.charAt(0).toUpperCase()}
@@ -93,7 +104,17 @@ export function ChatBox({
             )}
           </Box>
         </Box>
-      </Box>
+        {chatType === "GROUP" && currentGroupConversation?.id && (
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => setShowAddMembers(true)}
+          >
+            {" "}
+            Add Members
+          </Button>
+        )}
+      </Stack>
 
       <Divider />
 
@@ -145,6 +166,14 @@ export function ChatBox({
             </Box>
           </Box>
         </>
+      )}
+
+      {id && (
+        <AddMembersModal
+          open={showAddMembers}
+          conversationId={id}
+          onClose={() => setShowAddMembers(false)}
+        />
       )}
     </Box>
   );

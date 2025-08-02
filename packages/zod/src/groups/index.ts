@@ -10,7 +10,7 @@ export const  createGroupSchema = z.object({
 export const inviteToGroupSchema = z.object({
     senderId : z.string(),
     conversationId : z.string(),
-    receiverId : z.string(),
+    receiverIds : z.array(z.string()).min(1),
 })
 
 

@@ -14,7 +14,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useAppHelpers } from "../../lib/hooks/useAppHelpers";
-import { getPendingInvitesThunk, getPendingRequestsThunk } from "../../lib/redux/slices/auth/thunks";
+import {
+  getPendingInvitesThunk,
+  getPendingRequestsThunk,
+} from "../../lib/redux/slices/auth/thunks";
 import { SearchDropdown } from "../ui/search-dropdowm";
 import { getSearchUserRequest } from "../../api/user.api";
 import type { searchResultUser } from "../../lib/redux/slices/auth/types";
@@ -51,7 +54,7 @@ export function Header() {
   const handleFriendRequestClick = async (
     event: React.MouseEvent<HTMLElement>
   ) => {
-    setCurrentTab("DIRECT")
+    setCurrentTab("DIRECT");
     setRequestAnchor(event.currentTarget);
     setIsLoadingRequests(true);
     await dispatch(getPendingRequestsThunk()).unwrap();
@@ -61,7 +64,7 @@ export function Header() {
   const handleGroupRequestClick = async (
     event: React.MouseEvent<HTMLElement>
   ) => {
-    setCurrentTab("GROUP")
+    setCurrentTab("GROUP");
     setRequestAnchor(event.currentTarget);
     setIsLoadingRequests(true);
     await dispatch(getPendingInvitesThunk()).unwrap();
@@ -183,7 +186,7 @@ export function Header() {
               />
               <FriendRequestButton
                 type="GROUP"
-                requestCount={user?.pendingRequestsNumber || 0}
+                requestCount={user?.pendingInvitesNumber || 0}
                 onClick={handleGroupRequestClick}
               />
             </Box>

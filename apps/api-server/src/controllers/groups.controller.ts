@@ -67,15 +67,25 @@ export const invitToGroup = asyncHandler(async (req, res, next) => {
     throw new AppError("Incorrect Details", 400);
   }
 
-  const invite = await prisma.groupInvite.create({
-    data: {
-      conversationId: parsedData.data.conversationId,
-      receiverId: parsedData.data.receiverId,
-      senderId: parsedData.data.senderId,
-    },
+  const data = await prisma.$transaction(async (tx) => {
+    const results = [];
+
+    for (const receiverId of parsedData.data.receiverIds) {
+      const invite = await tx.groupInvite.create({
+        data: {
+          conversationId: parsedData.data.conversationId,
+          receiverId,
+          senderId: parsedData.data.senderId,
+        },
+      });
+
+      results.push(invite);
+    }
+
+    return results;
   });
 
-  if (!invite) {
+  if (!data || data.length !== parsedData.data.receiverIds.length) {
     throw new AppError("Failed to invite user", 500);
   }
 
@@ -135,22 +145,20 @@ export const getPendingGroupInvites = asyncHandler(async (req, res, next) => {
               id: true,
               name: true,
             },
-          }
+          },
         },
       },
     },
   });
-  
+
   if (!invites) {
     throw new AppError("No such user", 404);
   }
-  return res
-    .status(200)
-    .json({
-      success: true,
-      invites: invites.receivedInvites.map((invite) => ({
-        id: invite.id,
-        conversation: invite.conversation,
-      })),
-    });
+  return res.status(200).json({
+    success: true,
+    invites: invites.receivedInvites.map((invite) => ({
+      id: invite.id,
+      conversation: invite.conversation,
+    })),
+  });
 });

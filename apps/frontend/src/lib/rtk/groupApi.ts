@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { TCreateGroup } from "../../components/ui/create-group-modal";
-import type { TgetMessagesResponse } from "../redux/slices/chat/types";
 
 export type TGroup = {
   id: string;
@@ -35,32 +34,19 @@ export const groupApi = createApi({
       invalidatesTags: ["Group"],
     }),
 
-    getGroupConversations: builder.query<TGetGroupConversationsResponse, void>({
-      query: () => ({
-        url: "/conversation",
+    sendGroupInvite: builder.mutation<
+      { success: boolean },
+      { conversationId: string; receiverIds: string[] }
+    >({
+      query: (data: { conversationId: string; receiverIds: string[] }) => ({
+        url: "/group/invite",
         method: "POST",
-        body: { type: "GROUP" },
+        body: data,
         headers: { "Content-type": "application/json" },
         credentials: "include",
       }),
-      providesTags: ["Group"],
-    }),
-
-    getGroupMessages: builder.query<TgetMessagesResponse, {conversationId: string}>({
-      query: ({ conversationId }) => ({
-        url: "/messages",
-        method: "POST",
-        body: { conversationId },
-        headers: { "Content-type": "application/json" },
-        credentials: "include",
-      }),
-      transformResponse : (data : TgetMessagesResponse)=>{
-        return data
-      },
-      providesTags: ["Group"],
     }),
   }),
 });
 
-export const { useCreateGroupMutation, useGetGroupConversationsQuery , useLazyGetGroupMessagesQuery } =
-  groupApi;
+export const { useCreateGroupMutation, useSendGroupInviteMutation } = groupApi;

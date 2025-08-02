@@ -5,7 +5,10 @@ import { UserCard } from "../ui/user-card";
 import { GroupCard } from "../ui/group-card";
 import { useConversation } from "../../lib/hooks/useConversation";
 import { UserCardSkeleton } from "../loading/skeleton-loader";
-import type { dbFriend, TGroupConversation } from "../../lib/redux/slices/conversation/types";
+import type {
+  dbFriend,
+  TGroupConversation,
+} from "../../lib/redux/slices/conversation/types";
 import CreateGroupModal from "../ui/create-group-modal";
 
 interface FriendSelectionProps {
@@ -25,15 +28,18 @@ export function FriendSelection({
 }: FriendSelectionProps) {
   const { getConversations, groupConversations } = useConversation();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
-  const { directConversations, loading, currentDirectConversation , currentGroupConversation } =
-    useConversation();
+  const {
+    directConversations,
+    loading,
+    currentDirectConversation,
+    currentGroupConversation,
+  } = useConversation();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     event.preventDefault();
     setSelectedTab(newValue);
     if (newValue === 1) {
-      if(!groupConversations.length)
-      getConversations("GROUP");
+      if (!groupConversations.length) getConversations("GROUP");
     }
   };
 
@@ -103,7 +109,7 @@ export function FriendSelection({
               <>Search For new Friend to Chat</>
             )
           ) : (
-            groupConversations && groupConversations.length && (
+            selectedTab === 1 && (
               <Box>
                 <Typography
                   variant="h6"
@@ -117,22 +123,26 @@ export function FriendSelection({
                     +
                   </button>
                 </Typography>
-                {groupConversations.map((group) => (
-                  <GroupCard
-                    key={group.id}
-                    id={group.id}
-                    memberCount={group.members.length}
-                    name={group.groupName}
-                    isSelected={currentGroupConversation?.id === group.id}
-                    onClick={() =>
-                      onSelectChat({
-                        id: group.id,
-                        type: "GROUP",
-                        group: group,
-                      })
-                    }
-                  />
-                ))}
+                {groupConversations && groupConversations.length ? (
+                  groupConversations.map((group) => (
+                    <GroupCard
+                      key={group.id}
+                      id={group.id}
+                      memberCount={group.members.length}
+                      name={group.groupName}
+                      isSelected={currentGroupConversation?.id === group.id}
+                      onClick={() =>
+                        onSelectChat({
+                          id: group.id,
+                          type: "GROUP",
+                          group: group,
+                        })
+                      }
+                    />
+                  ))
+                ) : (
+                  <></>
+                )}
               </Box>
             )
           )}

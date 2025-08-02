@@ -247,7 +247,7 @@ export function FriendRequestButton({
   onClick,
 }: FriendRequestButtonProps) {
   return (
-    <Tooltip title="Friend requests">
+    <Tooltip title={type === "DIRECT" ? "Friend Requests" : "Group Requests"}>
       <IconButton
         onClick={onClick}
         className="text-gray-200 hover:text-gray-800"
