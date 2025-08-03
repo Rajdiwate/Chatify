@@ -2,11 +2,9 @@
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
   "tasks": {
-    "pipeline": {
-      "docker-build": {
-        "dependsOn": ["build"],
-        "cache": false
-      }
+    "docker-build": {
+      "dependsOn": ["build"],
+      "cache": false
     },
 
     "build": {
