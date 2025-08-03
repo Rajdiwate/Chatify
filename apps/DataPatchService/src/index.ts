@@ -11,7 +11,7 @@ const kafka = new Kafka({
 });
 
 export const timeThreshold =
-  Number(process.env.TIME_THRESHOLD) || 2 * 24 * 60 * 60 * 1000; // 2 days
+  process.env.TIME_THRESHOLD || 2 * 24 * 60 * 60 * 1000; // 2 days
 export const lengthThreshold = Number(process.env.LENGTH_THRESHOLD) || 20;
 export const retryTopic = process.env.RETRY_TOPIC || "retry";
 export const mainTopic = process.env.NMAIN_TOPIC || "persist";
