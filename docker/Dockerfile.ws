@@ -12,10 +12,10 @@ COPY ./packages ./packages
 COPY ./apps/ws-server ./apps/ws-server
 RUN pnpm install --frozen-lockfile
 
-ENV REDIS_URL="redis://redis:6379"
-ENV KAFKA_URL="kafka:9092"
-ENV MAIN_TOPIC="persist"
-ENV JWT_SECRET=fjonrojfnwrojvirnjvirjfreopif
+# ENV REDIS_URL="redis://redis:6379"
+# ENV KAFKA_URL="kafka:9092"
+# ENV MAIN_TOPIC="persist"
+# ENV JWT_SECRET=fjonrojfnwrojvirnjvirjfreopif
 
 RUN pnpm run ws:build
 EXPOSE 3000

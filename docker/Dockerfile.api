@@ -13,8 +13,8 @@ COPY ./apps/api-server ./apps/api-server
 RUN pnpm install --frozen-lockfile
 RUN pnpm run db:generate
 
-ENV REDIS_URL="redis://redis:6379"
-ENV JWT_SECRET=fjonrojfnwrojvirnjvirjfreopif
+# ENV REDIS_URL="redis://redis:6379"
+# ENV JWT_SECRET=fjonrojfnwrojvirnjvirjfreopif
 
 RUN pnpm run http:build
 EXPOSE 3000
