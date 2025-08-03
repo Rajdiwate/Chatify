@@ -11,6 +11,17 @@ jobs:
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
 
     - name: Install Docker
       uses: docker/setup-buildx-action@v3
@@ -21,50 +32,10 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Check if apps/api-server has changes
-      id: api_changed
+    - name: Build and push affected Docker images
       run: |
-        git fetch origin main
-        if git diff --quiet origin/main HEAD -- apps/api-server; then
-          echo "changed=false" >> $GITHUB_OUTPUT
-        else
-          echo "changed=true" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Check if apps/ws-server has changes
-      id: ws_changed
-      run: |
-        git fetch origin main
-        if git diff --quiet origin/main HEAD -- apps/ws-server; then
-          echo "changed=false" >> $GITHUB_OUTPUT
-        else
-          echo "changed=true" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Check if apps/DataPatchService has changes
-      id: datapatch_changed
-      run: |
-        git fetch origin main
-        if git diff --quiet origin/main HEAD -- apps/DataPatchService; then
-          echo "changed=false" >> $GITHUB_OUTPUT
-        else
-          echo "changed=true" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Build & Push API image
-      if: steps.api_changed.outputs.changed == 'true'
-      run: |
-        docker build -t rajd0311/chatify-api:${{ github.sha }} -f docker/Dockerfile.api .
-        docker push rajd0311/chatify-api:${{ github.sha }}
-
-    - name: Build & Push WS image
-      if: steps.ws_changed.outputs.changed == 'true'
-      run: |
-        docker build -t rajd0311/chatify-ws:${{ github.sha }} -f docker/Dockerfile.ws .
-        docker push rajd0311/chatify-ws:${{ github.sha }}
-
-    - name: Build & Push DataPatch image
-      if: steps.datapatch_changed.outputs.changed == 'true'
-      run: |
-        docker build -t rajd0311/chatify-data-patch:${{ github.sha }} -f docker/Dockerfile.data-patch .
-        docker push rajd0311/chatify-data-patch:${{ github.sha }}
+        # Use turbo to run docker-build task only for affected packages
+        npx turbo run docker-build --filter='...[HEAD^]'
+      env:
+        DOCKER_TAG: ${{ github.sha }}
+        DOCKER_USERNAME: rajd0311
