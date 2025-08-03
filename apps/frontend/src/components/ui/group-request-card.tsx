@@ -8,7 +8,7 @@ interface GroupRequestCardProps {
     name: string;
     id: string;
   };
-  onAccept: (id: string , conversationId : string) => void;
+  onAccept: (id: string , conversationId : string , groupName : string) => void;
   onDecline: (id: string) => void;
   isProcessing?: boolean;
 }
@@ -42,14 +42,14 @@ const GroupRequestCard = ({
             {conversation.name}
           </Typography>
           <Typography variant="body2" className="text-gray-600">
-            {conversation.name}
+            {/* {conversation.description} */}
           </Typography>
         </div>
         <Box className="flex gap-2">
           <Tooltip title="Accept">
             <IconButton
               color="success"
-              onClick={() => onAccept(id ,conversation.id)}
+              onClick={() => onAccept(id ,conversation.id , conversation.name)}
               disabled={isProcessing}
             >
               <Check className="w-6 h-6" />

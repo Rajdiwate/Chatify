@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { getCurrentUserThunk } from "../redux/slices/auth/thunks";
 import { logoutRequest } from "../../api/user.api";
 import { resetAuth } from "../redux/slices/auth/AuthSlice";
@@ -7,11 +7,10 @@ import { useAppHelpers } from "./useAppHelpers";
 import { resetConversation } from "../redux/slices/conversation/ConversationSlice";
 
 export const useAuth = () => {
-  const { loading, error, user, pendingRequests , pendingInvites } = useAppSelector(
-    (state) => state.auth,
-  );
+  const { loading, error, user, pendingRequests, pendingInvites } =
+    useAppSelector((state) => state.auth);
   const { dispatch, navigate } = useAppHelpers();
-  const isMounted = useRef(user ? true : false);
+  const isFetched = useRef(false);
 
   const logout = async () => {
     await logoutRequest();
@@ -20,12 +19,15 @@ export const useAuth = () => {
     dispatch(resetConversation());
   };
 
-  useEffect(() => {
-    if (!isMounted.current && !user) {
-      isMounted.current = true;
+  const fetchUser = useCallback(() => {
+    if (!isFetched.current && !user) {
+      isFetched.current = true;
       dispatch(getCurrentUserThunk());
     }
   }, [dispatch, user]);
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   return {
     user,

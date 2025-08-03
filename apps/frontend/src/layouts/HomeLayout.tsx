@@ -13,9 +13,11 @@ import {
   increasePendingInvite,
   increasePendingReq,
 } from "../lib/redux/slices/auth/AuthSlice";
+import { useAuth } from "../lib/hooks/useAuth";
 
 const HomeLayout = ({ children }: { children: ReactNode }) => {
   const socket = useSocket();
+  const {user} = useAuth();
   const { dispatch } = useAppHelpers();
   const { id } = useChat();
   const { directConversations, getConversations, groupConversations } =
@@ -113,7 +115,6 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     },
     [getConversations]
   );
-
   const handleRecieveInvite = useCallback(
     (data: {
       id: string;
@@ -141,6 +142,32 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     },
     [dispatch]
   );
+  const handleAcceptInvite = useCallback(
+    ({
+      from,
+      name,
+      groupName,
+    }: {
+      from: string;
+      name: string;
+      groupName: string;
+    }) => {
+      console.log("invite accepted, getting conversations");
+      if(user?.id === from) return
+      getConversations("GROUP");
+      toast.info(`${name} Joined ${groupName} group`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+        transition: Bounce,
+      });
+    },
+    [getConversations , user]
+  );
 
   useEffect(() => {
     handleSendConversations();
@@ -152,6 +179,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     socket?.on("receive:request", handleReceiveRequest);
     socket?.on("accept:request", handleAcceptRequest);
     socket?.on("receive:invite", handleRecieveInvite);
+    socket?.on("accept:invite", handleAcceptInvite);
     socket?.on("err", handleError);
     return () => {
       socket?.off("err", handleError);
@@ -160,15 +188,17 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
       socket?.off("receive:message", handleRecieveMessages);
       socket?.off("receive:request", handleReceiveRequest);
       socket?.off("accept:request", handleAcceptRequest);
+      socket?.off("accept:invite", handleAcceptInvite);
     };
   }, [
+    socket,
     handleSendConversations,
     handleRecieveMessages,
-    socket,
     handleError,
     handleReceiveRequest,
     handleAcceptRequest,
     handleRecieveInvite,
+    handleAcceptInvite,
   ]);
 
   return (

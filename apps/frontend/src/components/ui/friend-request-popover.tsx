@@ -48,6 +48,7 @@ export function FriendRequestPopover({
   const [acceptInvite] = useAcceptGroupInviteMutation();
   const { getConversations } = useConversation();
   const { dispatch } = useAppHelpers();
+  const { user } = useAuth();
   const socket = useSocket();
   const [notification, setNotification] = useState<{
     type: "success" | "error";
@@ -78,7 +79,7 @@ export function FriendRequestPopover({
         message: "Something went wrong. Please try again later",
       });
   };
-  const handleAcceptInvite = async (id: string, conversationId: string) => {
+  const handleAcceptInvite = async (id: string, conversationId: string , groupName : string) => {
     setProcessingIds((prev) => new Set(prev).add(id));
 
     console.log("invite ID", id);
@@ -92,10 +93,12 @@ export function FriendRequestPopover({
           });
           // update the number of pending Invites
           dispatch(onInviteAccept(id));
-          dispatch(reducePendingInvite())
-          socket?.emit("accept:request", {
-            senderId: id,
-            type: "GROUP",
+          dispatch(reducePendingInvite());
+          socket?.emit("accept:invite", {
+            name : user?.username,
+            from: user?.id,
+            groupName,
+            conversationId: conversationId,
           });
         });
       } else {
@@ -253,7 +256,7 @@ interface FriendRequestButtonProps {
 
 export function FriendRequestButton({
   type,
-  requestCount = 0,
+  requestCount ,
   onClick,
 }: FriendRequestButtonProps) {
   return (

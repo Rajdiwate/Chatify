@@ -10,6 +10,11 @@ import type {
   TGroupConversation,
 } from "../../lib/redux/slices/conversation/types";
 import CreateGroupModal from "../ui/create-group-modal";
+import { useAppHelpers } from "../../lib/hooks/useAppHelpers";
+import {
+  clearCurrentDirectConversation,
+  clearCurrentGroupConversation,
+} from "../../lib/redux/slices/conversation/ConversationSlice";
 
 interface FriendSelectionProps {
   onSelectChat: (chatInfo: {
@@ -28,6 +33,7 @@ export function FriendSelection({
 }: FriendSelectionProps) {
   const { getConversations, groupConversations } = useConversation();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
+  const { dispatch } = useAppHelpers();
   const {
     directConversations,
     loading,
@@ -37,10 +43,22 @@ export function FriendSelection({
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     event.preventDefault();
-    setSelectedTab(newValue);
-    if (newValue === 1) {
-      if (!groupConversations.length) getConversations("GROUP");
+    if (newValue === selectedTab) return;
+    if (newValue === 0 && selectedTab === 1 && currentGroupConversation) {
+      dispatch(clearCurrentDirectConversation());
+    } else if (
+      newValue === 1 &&
+      selectedTab === 0 &&
+      currentDirectConversation
+    ) {
+      dispatch(clearCurrentGroupConversation());
     }
+    if (newValue === 1) {
+      if (!groupConversations.length) {
+        getConversations("GROUP");
+      }
+    }
+    setSelectedTab(newValue);
   };
 
   return (
@@ -128,7 +146,7 @@ export function FriendSelection({
                     <GroupCard
                       key={group.id}
                       id={group.id}
-                      memberCount={group.members.length}
+                      memberCount={group.members.length + 1}
                       name={group.groupName}
                       isSelected={currentGroupConversation?.id === group.id}
                       onClick={() =>

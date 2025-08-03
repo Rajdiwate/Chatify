@@ -13,11 +13,11 @@ const groupInviteListeners = (
       from,
       conversationId,
       groupName,
-      inviteId
+      inviteId,
     }: {
       to: string[];
       from: string;
-      inviteId : string
+      inviteId: string;
       conversationId: string;
       groupName: string;
     }) => {
@@ -34,20 +34,23 @@ const groupInviteListeners = (
         console.log("emiting invite", receiverSocketId);
         if (receiverSocketId) {
           io.to(receiverSocketId).emit("receive:invite", {
-            id : inviteId,
-            conversation : {
-              id : conversationId,
-              name : groupName
-            }
+            id: inviteId,
+            conversation: {
+              id: conversationId,
+              name: groupName,
+            },
           });
         }
       });
     }
   );
 
-  socket.on("accept:invite" , ({conversationId} : {conversationId : string})=>{
-    
-  })
+  socket.on(
+    "accept:invite",
+    async ({ from, conversationId , name , groupName }: { from: string , name : string, conversationId: string  , groupName : string}) => {
+      io.to(conversationId).emit("accept:invite", { from, name , groupName });
+    }
+  );
 };
 
 export default groupInviteListeners;

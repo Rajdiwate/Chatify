@@ -16,6 +16,12 @@ export const ConversationSlice = createSlice({
     sendRequest: (_, action) => {
       console.log("req-sent to", action.payload);
     },
+    clearCurrentDirectConversation: (state) => {
+      state.currentDirectConversation = undefined;
+    },
+    clearCurrentGroupConversation: (state) => {
+      state.currentGroupConversation = undefined;
+    },
     pushtoDirectConversation: (state, action) => {
       state.directConversations.push(action.payload);
     },
@@ -92,4 +98,6 @@ export const {
   setCurrentGroupConversation,
   setCurrentDirectConversation,
   pushMessageInDirectConvorsation,
+  clearCurrentDirectConversation,
+  clearCurrentGroupConversation
 } = ConversationSlice.actions;

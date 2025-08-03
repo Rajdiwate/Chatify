@@ -9,7 +9,7 @@ import {
 import type { IAuth } from "./types";
 
 const initialState: IAuth = {
-  loading: false,
+  loading: true,
   pendingRequests: [],
   pendingInvites: [],
 };
@@ -35,7 +35,13 @@ const authSlice = createSlice({
     },
     increasePendingInvite: (state) => {
       if (state.user) {
-        state.user.pendingInvitesNumber += 1;
+        return {
+          ...state,
+          user: {
+            ...state.user,
+            pendingInvitesNumber: state.user.pendingInvitesNumber + 1,
+          },
+        };
       }
     },
     addToPendingInvites: (state, action) => {
@@ -111,7 +117,7 @@ const authSlice = createSlice({
 
     builder
       .addCase(getCurrentUserThunk.pending, (state) => {
-        state.loading = true;
+
         state.error = "";
       })
       .addCase(getCurrentUserThunk.fulfilled, (state, action) => {
